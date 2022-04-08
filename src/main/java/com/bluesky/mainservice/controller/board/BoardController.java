@@ -7,9 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -25,22 +23,22 @@ public class BoardController {
 
     @GetMapping
     public String list(Model model) {
-        List<BoardDto> boardList = boardService.findBoardList();
+        List<BoardDto> boardList = boardService.findList();
         Collections.reverse(boardList);
         model.addAttribute("boardList", boardList);
-        return "board/boardList";
+        return "board/board_list";
     }
 
     @GetMapping("/create")
     public String createForm(Model model) {
         model.addAttribute("boardForm", new BoardForm());
-        return "board/boardForm";
+        return "board/board_form";
     }
 
     @PostMapping("/create")
     public String create(@Valid BoardForm form, BindingResult result) {
         if (result.hasErrors()) {
-            return "board/boardForm";
+            return "board/board_form";
         }
         Board board = Board.builder()
                 .title(form.getTitle())
@@ -50,4 +48,12 @@ public class BoardController {
         boardService.save(board);
         return "redirect:/board";
     }
+
+    @GetMapping("/{boardId}")
+    public String view(@PathVariable final long boardId, Model model) {
+        BoardDto board = boardService.findOne(boardId);
+        model.addAttribute("board", board);
+        return "board/board_view";
+    }
+
 }

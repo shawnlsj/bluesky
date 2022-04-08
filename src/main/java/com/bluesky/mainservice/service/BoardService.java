@@ -19,11 +19,16 @@ public class BoardService {
     private final BoardRepository repository;
 
     @Transactional(readOnly = true)
-    public List<BoardDto> findBoardList() {
+    public List<BoardDto> findList() {
         List<Board> boardList = repository.findAll();
         return boardList.stream()
                    .map(BoardDto::new)
                    .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public BoardDto findOne(Long BoardId) {
+        return null;
     }
 
     public Long save(Board board) {
