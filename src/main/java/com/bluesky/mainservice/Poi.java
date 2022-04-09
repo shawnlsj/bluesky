@@ -21,7 +21,7 @@ public class Poi {
         cell.setCellValue("hello3");
         Cell cell1 = row.createCell(1);
         cell1.setCellValue("world3");
-
+        cell.setCellValue(3L);
         FileOutputStream fileOutputStream = new FileOutputStream(file);
         excel.write(fileOutputStream);
         fileOutputStream.close();
