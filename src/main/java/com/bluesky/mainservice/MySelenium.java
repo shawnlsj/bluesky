@@ -2,15 +2,13 @@ package com.bluesky.mainservice;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.poi.ss.formula.functions.Vlookup;
 import org.apache.poi.ss.usermodel.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-
-import javax.swing.text.html.Option;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -18,17 +16,17 @@ import java.util.concurrent.TimeUnit;
 
 public class MySelenium {
     static WebDriver driver;
+    static File file;
+    static Workbook excel;
     static Sheet sheet;
     static int rowIndex = 1;
     static int cellIndex = 0;
-    static Row row;
-    static Cell cell;
-    static LocalDate limitDate = LocalDate.parse("2021-12-02");
+    static LocalDate limitDate = LocalDate.parse("2021-12-03");
 
     public static void main(String[] args) throws Exception {
         //엑셀 읽어오기
-        File file = new File("C:/Users/lsj/Desktop/calendar.xlsx");
-        Workbook excel = WorkbookFactory.create(new FileInputStream(file));
+        file = new File("C:/Users/lsj/Desktop/calendar.xlsx");
+        excel = WorkbookFactory.create(new FileInputStream(file));
         sheet = excel.getSheetAt(0);
 
         System.setProperty("webdriver.chrome.driver", "D:/dev/chromedriver.exe");
@@ -36,7 +34,16 @@ public class MySelenium {
         driver.get("https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=https://www.g2b.go.kr:8340/search.do?category=TGONG&kwd=%B4%DE%B7%C2");
         driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
         driver.switchTo().frame(1);
+        pageProcess();
+        while (true) {
+            for (int i = 0; i < 5; i++) {
+                //다음 버튼 클릭
+            }
+            //끝 페이지 다음 버튼 클릭
+        }
+    }
 
+    private static void pageProcess() throws IOException {
         //페이지 게시글 리스트 가져오기
         List<WebElement> liList = driver.findElements(By.cssSelector("#contents > div.search_area > ul > li"));
 
@@ -56,7 +63,7 @@ public class MySelenium {
                 FileOutputStream fileOutputStream = new FileOutputStream(file);
                 excel.write(fileOutputStream);
                 fileOutputStream.close();
-                return;
+                System.exit(0);
             }
 
 
