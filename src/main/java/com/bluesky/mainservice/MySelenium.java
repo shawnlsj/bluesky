@@ -21,7 +21,7 @@ public class MySelenium {
     static Sheet sheet;
     static int rowIndex = 1;
     static int cellIndex = 0;
-    static LocalDate limitDate = LocalDate.parse("2021-12-03");
+    static LocalDate limitDate = LocalDate.parse("2021-12-01");
 
     public static void main(String[] args) throws Exception {
         //엑셀 읽어오기
@@ -32,18 +32,41 @@ public class MySelenium {
         System.setProperty("webdriver.chrome.driver", "D:/dev/chromedriver.exe");
         driver = new ChromeDriver();
         driver.get("https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=https://www.g2b.go.kr:8340/search.do?category=TGONG&kwd=%B4%DE%B7%C2");
-        driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-        driver.switchTo().frame(1);
-        pageProcess();
+
         while (true) {
-            for (int i = 0; i < 5; i++) {
-                //다음 버튼 클릭
+            driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+            driver.switchTo().defaultContent();
+            driver.switchTo().frame(1);
+            List<WebElement> pageButtonList = driver.findElements(By.cssSelector("#contents > div.search_area > div.pagination > span > a"));
+            int size = pageButtonList.size();
+
+            for (int i = 0; i < size; i++) {
+                pageProcess();
+                if (i == size - 1) {
+                    break;
+                }
+                driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+                driver.switchTo().defaultContent();
+                driver.switchTo().frame(1);
+                pageButtonList = driver.findElements(By.cssSelector("#contents > div.search_area > div.pagination > span > a"));
+                System.out.println("pageButtonList size = " + pageButtonList.size());
+                //다음 페이지 버튼 클릭
+                pageButtonList.get(i + 1).sendKeys(Keys.ENTER);
+                Thread.sleep(1000);
             }
+            driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+            driver.switchTo().defaultContent();
+            driver.switchTo().frame(1);
             //끝 페이지 다음 버튼 클릭
+            driver.findElement(By.cssSelector("#contents > div.search_area > div.pagination > a.page_next")).sendKeys(Keys.ENTER);
+            Thread.sleep(1000);
         }
     }
 
     private static void pageProcess() throws IOException {
+        driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+        driver.switchTo().defaultContent();
+        driver.switchTo().frame(1);
         //페이지 게시글 리스트 가져오기
         List<WebElement> liList = driver.findElements(By.cssSelector("#contents > div.search_area > ul > li"));
 
@@ -96,7 +119,7 @@ public class MySelenium {
     private static void writeToMemory(Info info) {
         Row row = sheet.createRow(rowIndex);
 
-        //공고날짜(년,월,일)	공고기관	배정예산	수량	 계약방법 예가방법 공고명
+        //공고날짜(년,월,일)	공고기관	배정예산	수량 단위 계약방법 예가방법 공고명
         LocalDate date = info.getDate().getValue();
 
         Cell cell = row.createCell(cellIndex);
@@ -127,6 +150,12 @@ public class MySelenium {
         if (info.getQuantity().isNotEmpty()) {
             cell = row.createCell(cellIndex);
             cell.setCellValue(info.getQuantity().value);
+        }
+        cellIndex++;
+
+        if (info.getUnit().isNotEmpty()) {
+            cell = row.createCell(cellIndex);
+            cell.setCellValue(info.getUnit().value);
         }
         cellIndex++;
 
