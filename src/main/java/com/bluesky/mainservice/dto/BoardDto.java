@@ -12,10 +12,14 @@ public class BoardDto {
     private final String title;
     private final String content;
 
-    public BoardDto(Board board) {
+    private BoardDto(Board board) {
         this.id = board.getId();
         this.createDateTime = board.getCreateDateTime();
         this.title = board.getTitle();
         this.content = board.getContent();
+    }
+
+    public static BoardDto build(Board board) {
+        return new BoardDto(board);
     }
 }

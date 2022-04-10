@@ -1,4 +1,4 @@
-package com.bluesky.mainservice;
+package com.bluesky.util;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +21,7 @@ public class MySelenium {
     static Sheet sheet;
     static int rowIndex = 1;
     static int cellIndex = 0;
-    static LocalDate limitDate = LocalDate.parse("2021-12-01");
+    static LocalDate limitDate = LocalDate.parse("2021-11-01");
 
     public static void main(String[] args) throws Exception {
         //엑셀 읽어오기
