@@ -5,7 +5,6 @@ spring:
     password:
     driver-class-name: org.h2.Driver
 
-
   jpa:
     hibernate:
       ddl-auto: create
@@ -13,6 +12,12 @@ spring:
       hibernate:
         format_sql: true
         default_batch_fetch_size: 100
+
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
 
 logging:
   level:

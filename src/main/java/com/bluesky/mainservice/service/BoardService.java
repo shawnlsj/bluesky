@@ -4,6 +4,7 @@ import com.bluesky.mainservice.domain.Board;
 import com.bluesky.mainservice.dto.BoardDto;
 import com.bluesky.mainservice.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,5 +44,13 @@ public class BoardService {
     public Long save(Board board) {
         repository.save(board);
         return board.getId();
+    }
+
+    public void delete(long boardId) {
+        try {
+            repository.deleteById(boardId);
+        } catch (EmptyResultDataAccessException exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않거나 이미 삭제된 게시물입니다.");
+        }
     }
 }

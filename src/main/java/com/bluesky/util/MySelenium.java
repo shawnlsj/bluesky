@@ -19,20 +19,26 @@ public class MySelenium {
     static File file;
     static Workbook excel;
     static Sheet sheet;
+
     static int rowIndex = 1;
     static int cellIndex = 0;
-    static LocalDate limitDate = LocalDate.parse("2021-11-01");
+
+    //검색 제한 날짜 , 엑셀 파일 시트 인덱스, 시작 url 세팅
+    static LocalDate limitDate = LocalDate.parse("2015-01-01");
+    static final int START_INDEX=3;
+    static final String TARGET_URL =
+            "https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=https://www.g2b.go.kr:8340/search.do?category=TGONG&kwd=%BC%F6%C3%B8";
 
     public static void main(String[] args) throws Exception {
         //엑셀 읽어오기
         file = new File("C:/Users/lsj/Desktop/calendar.xlsx");
         excel = WorkbookFactory.create(new FileInputStream(file));
-        sheet = excel.getSheetAt(0);
+        sheet = excel.getSheetAt(START_INDEX);
 
         System.setProperty("webdriver.chrome.driver", "D:/dev/chromedriver.exe");
         driver = new ChromeDriver();
-        driver.get("https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=https://www.g2b.go.kr:8340/search.do?category=TGONG&kwd=%B4%DE%B7%C2");
-
+        driver.get(TARGET_URL);
+        Thread.sleep(1000);
         while (true) {
             driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
             driver.switchTo().defaultContent();
@@ -49,7 +55,6 @@ public class MySelenium {
                 driver.switchTo().defaultContent();
                 driver.switchTo().frame(1);
                 pageButtonList = driver.findElements(By.cssSelector("#contents > div.search_area > div.pagination > span > a"));
-                System.out.println("pageButtonList size = " + pageButtonList.size());
                 //다음 페이지 버튼 클릭
                 pageButtonList.get(i + 1).sendKeys(Keys.ENTER);
                 Thread.sleep(1000);

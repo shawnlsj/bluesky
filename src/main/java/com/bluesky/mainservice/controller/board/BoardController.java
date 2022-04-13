@@ -53,8 +53,12 @@ public class BoardController {
     public String view(@PathVariable final long boardId, Model model) {
         BoardDto board = boardService.findOne(boardId);
         model.addAttribute("board", board);
-        System.out.println("board = " + board.getTitle());
         return "board/board_view";
     }
 
+    @DeleteMapping("/{boardId}")
+    public String delete(@PathVariable final long boardId) {
+        boardService.delete(boardId);
+        return "redirect:/board";
+    }
 }
