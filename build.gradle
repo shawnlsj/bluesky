@@ -72,3 +72,9 @@ compileQuerydsl{
 	options.annotationProcessorPath = configurations.querydsl
 }
 
+
+//plain jar 생성 방지
+jar {
+	enabled = false
+}
+
