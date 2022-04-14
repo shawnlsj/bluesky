@@ -9,7 +9,7 @@ spring:
       ddl-auto: create
     properties:
       hibernate:
-        format_sql: true
+#        format_sql: true
         default_batch_fetch_size: 100
 
   mvc:
@@ -20,10 +20,13 @@ spring:
 
 logging:
   level:
-   org.hibernate.SQL: debug
+   org.hibernate.SQL: info
 
 
 decorator:
   datasource:
     p6spy:
       enable-logging: false
+
+server:
+  port: 8080
