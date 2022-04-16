@@ -1,0 +1,19 @@
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### IntelliJ IDEA ###
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# *.iws 사용자별 설정을 공유하는 파일
+
+# Gradle
+.idea/**/gradle.xml
+.idea/**/libraries
+
+
