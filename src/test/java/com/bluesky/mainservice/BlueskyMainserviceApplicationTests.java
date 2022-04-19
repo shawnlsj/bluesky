@@ -16,7 +16,6 @@ class BlueskyMainserviceApplicationTests {
 	EntityManager em;
 
 	@Test
-	@Rollback(value = false)
 	void contextLoads() {
 //		Team teamA = new Team();
 //		teamA.name = "teamA";
