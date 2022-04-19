@@ -4,13 +4,10 @@ import com.bluesky.mainservice.controller.argument.MobilePage;
 import org.springframework.core.MethodParameter;
 import org.springframework.mobile.device.Device;
 import org.springframework.mobile.device.DeviceUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-
-import javax.validation.constraints.NotNull;
 
 public class MobilePageArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
