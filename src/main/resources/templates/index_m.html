@@ -10,14 +10,11 @@
             crossorigin="anonymous"></script>
 </head>
 <body>
-<div class="d-grid gap-3 col-2 mx-auto">
-</div>
-<div class="d-grid gap-3 col-11 mx-auto" style="padding-top: 10%">
+<div class="d-grid gap-3 col-4 mx-auto" style="padding-top: 10%">
     <button type="button" class="btn btn-outline-dark btn-lg" th:onclick="|location.href='@{/board}'|">게시판 바로가기</button>
     <button type="button" class="btn btn-outline-dark btn-lg">관리자 바로가기</button>
 </div>
-<div class="d-grid col-6">
-    <button type="button">pc 화면 보기</button>
+<div class="footer" th:replace="fragment/fragment_footer_m :: footer">
 </div>
 </body>
 </html>

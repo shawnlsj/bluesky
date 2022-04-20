@@ -17,23 +17,26 @@ public class MobilePageArgumentResolver implements HandlerMethodArgumentResolver
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        MobilePage page;
         Device device = DeviceUtils.getCurrentDevice(webRequest);
 
-        //쿼리 스트링에서 mobile=true 로 되어있는지 확인한다
-        boolean isMobile = false;
-        String mobileParameter = webRequest.getParameter("mobile");
-        if (mobileParameter != null) {
-            if (mobileParameter.equals("true")) {
-                isMobile = true;
+        //요청 파라미터에서 mobile=true -> 모바일버전 화면, mobile=false -> pc버전 화면 출력해야함
+        String mobileParam = webRequest.getParameter("mobile");
+        if (mobileParam != null) {
+            if (mobileParam.equals("true")) {
+                return MobilePage.createAndSet(true);
+            } else if (mobileParam.equals("false")) {
+                return MobilePage.createAndSet(false);
             }
         }
+        //파라미터로 따로 모바일 화면 요청을 안했으니 디바이스에 따라서 모바일 화면 출력 여부를 결정함
+        return createMobilePage(device);
+    }
 
-        if (device.isMobile() || device.isTablet() || isMobile) {
-            page = MobilePage.createAndSet(true);
+    private MobilePage createMobilePage(Device device) {
+        if (device.isMobile() || device.isTablet()) {
+            return MobilePage.createAndSet(true);
         } else {
-            page = MobilePage.createAndSet(false);
+            return MobilePage.createAndSet(false);
         }
-        return page;
     }
 }
