@@ -23,7 +23,7 @@
         <h2 class="fs-5" th:text="${board.title}"> 제목 </h2>
         <hr>
         <article>
-            본문
+            <p th:text="${board.content}"></p>
         </article>
     </div>
     <form th:method="delete" th:action="@{/board/{id}(id=${board.id})}">
