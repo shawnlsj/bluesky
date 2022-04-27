@@ -43,7 +43,8 @@
             }
 
             .editor-content-box {
-                height: 300px;
+                height: 350px;
+                overflow: auto;
             }
 
             .editor-content {
@@ -90,24 +91,24 @@
             </div>
             <div class="editor-box mt-3">
                 <div class="editor-toolbar-box">
-                    <span class="editor-toolbar">
+                    <div class="editor-toolbar">
                         <button class="btn-toggle btn-editor-toolbar-start" type="button"
-                                aria-pressed="false">
+                                aria-pressed="false" onmousedown="return false">
                             <b>가</b>
                         </button>
                         <button class="btn-toggle btn-editor-toolbar" type="button"
-                                aria-pressed="false">
+                                aria-pressed="false" onmousedown="return false">
                             <i>가</i>
                         </button>
                         <button class="btn-toggle btn-editor-toolbar" type="button"
-                                aria-pressed="false">
+                                aria-pressed="false" onmousedown="return false">
                             <u>가</u>
                         </button>
                         <button class="btn-toggle btn-editor-toolbar-end" type="button"
-                                aria-pressed="false">
+                                aria-pressed="false" onmousedown="return false">
                             <s>가</s>
                         </button>
-                    </span>
+                    </div>
                 </div>
                 <div class="editor-content-box">
                     <div class="editor-content">
@@ -121,19 +122,11 @@
 </div>
 </p>
 <script>
-    Array.from(document.getElementsByClassName("btn-toggle")).forEach((toggleButton) => {
-        toggleButton.addEventListener("click", function () {
-            this.setAttribute("aria-pressed",  toggleButton.getAttribute("aria-pressed") == "true" ? false : true);
-        });
-    });
-
-
     let isContentClicked = false;
-
 
     function focusToEnd() {
         const editor = document.getElementsByClassName("editor")[0];
-        const selection = window.getSelection();
+        const selection = document.getSelection();
         const range = document.createRange();
         selection.removeAllRanges();
         range.selectNodeContents(editor);
@@ -157,13 +150,20 @@
             isContentClicked = true;
         };
 
-    // 제목에서 엔터 키를 입력 하면 본문의 맨 끝으로 이동한다.
+    //제목에서 엔터 키를 입력 하면 본문의 맨 끝으로 이동한다.
     document.getElementById("title").addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             event.preventDefault();
             focusToEnd();
         }
     })
+
+    Array.from(document.getElementsByClassName("btn-toggle")).forEach((toggleButton) => {
+        toggleButton.addEventListener("click", function () {
+            //버튼이 눌리면 aria-pressed 값을 반대 값으로 바꾼다
+            this.setAttribute("aria-pressed", toggleButton.getAttribute("aria-pressed") == "true" ? false : true);
+        });
+    });
 </script>
 </body>
 </html>
