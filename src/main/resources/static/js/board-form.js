@@ -197,6 +197,17 @@ function initEventListeners() {
         });
     }
 
+    window.addEventListener("pagehide", function () {
+        function clearValues() {
+            elementManager.title.titleElement.value = "";
+            elementManager.editor.editorElement.innerHTML = "";
+            elementManager.title.currentTitleSizeElement.textContent = "0";
+            elementManager.editor.currentContentSizeElement.textContent = "0";
+            elementManager.editor.currentHtmlSizeElement.textContent = "0";
+        }
+        clearValues();
+    });
+
     //버튼 자신이 가진 data-fontsize 속성 값을 기반으로 자신의 글자 크기를 키운다
     Array.from(document.getElementsByClassName("btn-dropdown-fontsize")).forEach((button) => {
         button.addEventListener("click", function () {
