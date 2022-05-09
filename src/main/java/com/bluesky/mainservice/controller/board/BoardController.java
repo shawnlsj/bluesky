@@ -4,6 +4,7 @@ import com.bluesky.mainservice.domain.Board;
 import com.bluesky.mainservice.dto.BoardDto;
 import com.bluesky.mainservice.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,11 +12,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/board")
@@ -43,6 +46,7 @@ public class BoardController {
     @PostMapping("/create")
     public String create(@Valid BoardSaveForm form, BindingResult result) {
         if (result.hasErrors()) {
+            log.info(result.getFieldError().toString());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.");
         }
         Board board = Board.builder()
