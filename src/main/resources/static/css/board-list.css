@@ -1,0 +1,23 @@
+.container-fluid {
+    margin-right: auto;
+    margin-left: auto;
+    max-width: 1100px;
+    margin-top: 3%;
+}
+
+.link-title {
+    text-decoration-line: none;
+    color: black;
+}
+
+.table-id {
+    width: 15%;
+}
+
+.table-title {
+    width: 65%;
+}
+
+.table-createdate {
+    width: 20%;
+}
