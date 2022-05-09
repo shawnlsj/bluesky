@@ -1,8 +1,9 @@
 package com.bluesky.mainservice.config;
 
-import com.bluesky.mainservice.argumentresolver.MobilePageArgumentResolver;
-import com.bluesky.mainservice.filter.XssFilter;
-import com.bluesky.mainservice.interceptor.XssInterceptor;
+import com.bluesky.mainservice.config.argumentresolver.MobilePageArgumentResolver;
+import com.bluesky.mainservice.config.filter.XssFilter;
+import com.bluesky.mainservice.config.interceptor.XssInterceptor;
+import org.springframework.boot.autoconfigure.web.ErrorProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,5 +36,10 @@ public class WebConfig implements WebMvcConfigurer {
         filterRegistrationBean.setFilter(new XssFilter());
         filterRegistrationBean.addUrlPatterns("/*");
         return filterRegistrationBean;
+    }
+
+    @Bean
+    public ErrorProperties errorProperties(){
+        return new ErrorProperties();
     }
 }

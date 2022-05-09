@@ -1,4 +1,4 @@
-package com.bluesky.mainservice.argumentresolver;
+package com.bluesky.mainservice.config.argumentresolver;
 
 import com.bluesky.mainservice.controller.argument.MobilePage;
 import org.springframework.core.MethodParameter;

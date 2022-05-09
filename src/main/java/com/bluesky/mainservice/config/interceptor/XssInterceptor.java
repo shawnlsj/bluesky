@@ -1,4 +1,4 @@
-package com.bluesky.mainservice.interceptor;
+package com.bluesky.mainservice.config.interceptor;
 
 import org.springframework.web.servlet.HandlerInterceptor;
 

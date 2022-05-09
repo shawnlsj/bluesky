@@ -1,7 +1,6 @@
-package com.bluesky.mainservice.filter;
+package com.bluesky.mainservice.config.filter;
 
 import com.navercorp.lucy.security.xss.servletfilter.XssEscapeServletFilter;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
