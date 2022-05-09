@@ -5,10 +5,6 @@
     margin-top: 5%;
 }
 
-.form-error {
-    border: thin solid red;
-}
-
 .editor-box {
     border: thin solid #a0a0a0;
     border-radius: 3px;
@@ -77,7 +73,7 @@
     margin-left: 2rem;
     float: right;
     position: relative;
-    z-index:99;
+    z-index: 99;
 }
 
 .dropdown-fontsize-box:hover[data-active="true"] .btn-dropdown-fontsize {
@@ -93,7 +89,7 @@
 }
 
 
-.dropdown-fontsize-box:hover .btn-fontsize{
+.dropdown-fontsize-box:hover .btn-fontsize {
     border-radius: 3px 3px 3px 0px;
     background-color: #d6d6d6;
 }
@@ -110,3 +106,14 @@
     float: right;
 }
 
+[data-overflow-titlesize="true"] {
+    color: red;
+}
+
+[data-overflow-contentsize="true"] {
+    color: red;
+}
+
+[data-overflow-htmlsize="true"] {
+    color: red;
+}
