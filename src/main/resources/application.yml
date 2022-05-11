@@ -18,11 +18,10 @@ spring:
       filter:
         enabled: true
 
-
 logging:
   level:
-   org.hibernate.SQL: debug
-
+    com.bluesky.mainservice: debug
+    org.hibernate.SQL: debug
 
 decorator:
   datasource:

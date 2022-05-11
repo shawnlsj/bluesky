@@ -1,19 +1,23 @@
 package com.bluesky.mainservice.controller.board;
 
+import com.bluesky.mainservice.controller.validation.TextSize;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import static com.bluesky.mainservice.controller.board.Options.*;
+
 @Getter
 @Setter
 class BoardSaveForm {
-    @NotBlank(message = "제목을 1자 이상 입력하여 주세요.")
-    @Size(min = 1, max = Options.MAX_TITLE_SIZE, message = "제한 길이 초과")
+    @NotBlank
+    @Size(max = MAX_TITLE_SIZE)
     private String title;
 
-    @NotBlank(message = "본문을 1자 이상 입력하여 주세요.")
-    @Size(min = 1, max = Options.MAX_CONTENT_SIZE, message = "제한 길이 초과")
+    @NotBlank
+    @Size(max = MAX_HTML_SIZE)
+    @TextSize(max = MAX_CONTENT_SIZE)
     private String content;
 }

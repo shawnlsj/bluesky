@@ -1,3 +1,5 @@
+import messages from "./messages.js";
+
 window.onload = init;
 
 let selection;
@@ -106,7 +108,11 @@ function initEventListeners() {
     addEventListenersToTitle();
 
     function addEventListenersToEditor() {
-
+        elementManager.editor.editorElement.addEventListener("paste", function (event) {
+            event.preventDefault();
+            const text = event.clipboardData.getData("text/plain");
+            document.execCommand("insertText", false, text);
+        })
         elementManager.editor.editorElement.addEventListener("cut", function () {
             requestAnimationFrame(elementManager.editor.updateCurrentSize);
 
@@ -205,6 +211,7 @@ function initEventListeners() {
             elementManager.editor.currentContentSizeElement.textContent = "0";
             elementManager.editor.currentHtmlSizeElement.textContent = "0";
         }
+
         clearValues();
     });
 
@@ -235,17 +242,24 @@ function initEventListeners() {
             }
 
             function existsEmptyValue() {
-                const isTitleEmpty = elementManager.title.currentTitleSizeElement.getAttribute("data-current-titlesize") == 0;
-                const isContentEmpty = elementManager.editor.currentContentSizeElement.getAttribute("data-current-contentsize") == 0;
-                return isTitleEmpty || isContentEmpty;
+                function isTitleEmpty(){
+                    const value = elementManager.title.titleElement.value;
+                    return value.trim().length == 0;
+                }
+
+                function isContentEmpty() {
+                    const value = elementManager.editor.editorElement.innerText;
+                    return value.replaceAll("\n", "").trim().length == 0;
+                }
+                return isTitleEmpty() || isContentEmpty();
             }
 
             if (existsEmptyValue()) {
                 event.preventDefault();
-                alert("제목과 본문 모두 1자 이상 입력하여야 합니다.")
+                alert(messages.alert.notBlank);
             } else if (existsOverflowedSize()) {
                 event.preventDefault();
-                alert("제한된 입력 범위를 초과 하였습니다.");
+                alert(messages.alert.range);
             } else {
                 document.getElementsByName("content")[0].value
                     = document.getElementsByClassName("editor")[0].innerHTML;
