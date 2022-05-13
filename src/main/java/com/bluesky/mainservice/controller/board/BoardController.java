@@ -1,7 +1,7 @@
 package com.bluesky.mainservice.controller.board;
 
-import com.bluesky.mainservice.domain.Board;
-import com.bluesky.mainservice.dto.BoardDto;
+import com.bluesky.mainservice.repository.domain.Board;
+import com.bluesky.mainservice.repository.dto.BoardDto;
 import com.bluesky.mainservice.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Collections;

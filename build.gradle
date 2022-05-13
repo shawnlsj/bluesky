@@ -53,6 +53,8 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+
+//Querydsl 설정
 def querydslDir = "$buildDir/generated/querydsl"
 
 querydsl{

@@ -1,6 +1,6 @@
-package com.bluesky.mainservice.dto;
+package com.bluesky.mainservice.repository.dto;
 
-import com.bluesky.mainservice.domain.Board;
+import com.bluesky.mainservice.repository.domain.Board;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

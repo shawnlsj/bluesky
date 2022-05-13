@@ -1,4 +1,4 @@
-package com.bluesky.mainservice.domain;
+package com.bluesky.mainservice.repository.domain;
 
 import lombok.AccessLevel;
 import lombok.Builder;
