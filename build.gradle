@@ -42,9 +42,11 @@ dependencies {
 	implementation 'org.apache.poi:poi-ooxml:5.2.2' // MS오피스 다루는 라이브러리
 	implementation "com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.0" // 로깅 라이브러리
 	implementation "com.navercorp.lucy:lucy-xss-servlet:2.0.0" // xss 방어 라이브러리
+	implementation "com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4" // 암호화 라이브러리
 
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.h2database:h2'
+//	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'mysql:mysql-connector-java:8.0.29'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
