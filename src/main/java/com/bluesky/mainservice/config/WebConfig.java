@@ -37,9 +37,4 @@ public class WebConfig implements WebMvcConfigurer {
         filterRegistrationBean.addUrlPatterns("/*");
         return filterRegistrationBean;
     }
-
-    @Bean
-    public ErrorProperties errorProperties(){
-        return new ErrorProperties();
-    }
 }

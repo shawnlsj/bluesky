@@ -1,15 +1,22 @@
 spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: postgres://yhqgalceygxbuy:294b65bafe22dde4742476473205fac16ed4d81d9428973b0c35403959cacbc4@ec2-34-197-84-74.compute-1.amazonaws.com:5432/dcqjtsg7v6te6c
+  profiles:
+    active: "local"
+---
+spring:
+  config:
+    activate:
+      on-profile: "prod"
 
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ENC(T5CU1bAIMKpHz62bhGN7ipjo5SgMmv1Bwa6TY6++k6XmaO/g9e25tD3N8DQZTJCLh5lezenm2KuRQYAHilFYXlNnzpnvCCa4byVOYoG8HW1wfc7EJYkXr9H+tFFoiL4PRE99r/++FUQOODhSyTiGBg==)
 
   jpa:
     hibernate:
       ddl-auto: create
     properties:
       hibernate:
-#        format_sql: true
+        #        format_sql: true
         default_batch_fetch_size: 100
 
   mvc:
@@ -17,11 +24,9 @@ spring:
       filter:
         enabled: true
 
-
 logging:
   level:
-   org.hibernate.SQL: info
-
+    org.hibernate.SQL: info
 
 decorator:
   datasource:
@@ -30,3 +35,44 @@ decorator:
 
 server:
   port: 8080
+---
+spring:
+  config:
+    activate:
+      on-profile: "local"
+  datasource:
+    url: jdbc:mysql://localhost:3306/bluesky
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+#h2 설정
+#spring:
+#  datasource:
+#    url: jdbc:h2:tcp://localhost/~/test
+#    username: sa
+#    password:
+#    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
+logging:
+  level:
+    com.bluesky.mainservice: debug
+    org.hibernate.SQL: debug
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
