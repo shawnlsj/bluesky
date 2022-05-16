@@ -1,8 +1,4 @@
 spring:
-  profiles:
-    active: "local"
----
-spring:
   config:
     activate:
       on-profile: "prod"
@@ -35,44 +31,3 @@ decorator:
 
 server:
   port: 8080
----
-spring:
-  config:
-    activate:
-      on-profile: "local"
-  datasource:
-    url: jdbc:mysql://localhost:3306/bluesky
-    username: root
-    password: 1234
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
-#h2 설정
-#spring:
-#  datasource:
-#    url: jdbc:h2:tcp://localhost/~/test
-#    username: sa
-#    password:
-#    driver-class-name: org.h2.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-        format_sql: true
-        default_batch_fetch_size: 100
-
-  mvc:
-    hiddenmethod:
-      filter:
-        enabled: true
-
-logging:
-  level:
-    com.bluesky.mainservice: debug
-    org.hibernate.SQL: debug
-
-decorator:
-  datasource:
-    p6spy:
-      enable-logging: true
