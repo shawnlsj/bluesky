@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config xmlns="http://www.nhncorp.com/lucy-xss">
+    <elementRule>
+        <element name="div"/>
+        <element name="p"/>
+        <element name="span"/>
+        <element name="br"/>
+        <element name="b"/>
+        <element name="i"/>
+        <element name="u"/>
+        <element name="s"/>
+        <element name="strike"/>
+        <element name="strong"/>
+        <element name="font"/>
+    </elementRule>
+
+    <attributeRule>
+        <attribute name="size">
+        </attribute>
+    </attributeRule>
+</config>

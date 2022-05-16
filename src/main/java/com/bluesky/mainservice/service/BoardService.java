@@ -1,7 +1,7 @@
 package com.bluesky.mainservice.service;
 
-import com.bluesky.mainservice.domain.Board;
-import com.bluesky.mainservice.dto.BoardDto;
+import com.bluesky.mainservice.repository.domain.Board;
+import com.bluesky.mainservice.repository.dto.BoardDto;
 import com.bluesky.mainservice.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

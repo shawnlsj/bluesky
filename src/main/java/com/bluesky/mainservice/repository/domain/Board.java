@@ -1,4 +1,4 @@
-package com.bluesky.mainservice.domain;
+package com.bluesky.mainservice.repository.domain;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -35,6 +35,4 @@ public class Board {
 
     private String title;
     private String content;
-
-
 }
