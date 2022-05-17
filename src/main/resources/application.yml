@@ -34,4 +34,4 @@ decorator:
       enable-logging: false
 
 server:
-  port: 8080
+  port: {$PORT}
