@@ -235,21 +235,21 @@ function initEventListeners() {
     //에디터에서 작성한 내용을 input hidden 에 담는다
     document.forms["boardForm"].addEventListener("submit", function (event) {
             function existsOverflowedSize() {
-                const isTitleSizeOverflowed = elementManager.title.overflowTitleSizeElement.getAttribute("data-overflow-titlesize") == "true";
-                const isContentSizeOverflowed = elementManager.editor.overflowContentSizeElement.getAttribute("data-overflow-contentsize") == "true";
-                const isHtmlSizeOverflowed = elementManager.editor.overflowHtmlSizeElement.getAttribute("data-overflow-htmlsize") == "true";
+                const isTitleSizeOverflowed = elementManager.title.overflowTitleSizeElement.getAttribute("data-overflow-titlesize") === "true";
+                const isContentSizeOverflowed = elementManager.editor.overflowContentSizeElement.getAttribute("data-overflow-contentsize") === "true";
+                const isHtmlSizeOverflowed = elementManager.editor.overflowHtmlSizeElement.getAttribute("data-overflow-htmlsize") === "true";
                 return isTitleSizeOverflowed || isContentSizeOverflowed || isHtmlSizeOverflowed;
             }
 
             function existsEmptyValue() {
                 function isTitleEmpty(){
                     const value = elementManager.title.titleElement.value;
-                    return value.trim().length == 0;
+                    return value.trim().length === 0;
                 }
 
                 function isContentEmpty() {
                     const value = elementManager.editor.editorElement.innerText;
-                    return value.replaceAll("\n", "").trim().length == 0;
+                    return value.replaceAll("\n", "").trim().length === 0;
                 }
                 return isTitleEmpty() || isContentEmpty();
             }
