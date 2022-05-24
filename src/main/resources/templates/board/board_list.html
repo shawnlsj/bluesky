@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="ko-KR">
-<head th:replace="~{fragment/fragment_head :: head (~{::title},~{::th:block})}">
+<html lang="ko-KR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragment/fragment_head :: head (~{::title},~{::head-block})}">
     <meta charset="UTF-8">
     <title>bluesky-게시판</title>
-    <th:block>
+    <th:block th:fragment="head-block">
         <link rel="stylesheet" href="/css/board-list.css"/>
     </th:block>
 </head>
 <body>
 <div class="container-fluid">
-    <a class="btn btn-primary float-end" th:href="@{board/create}">글쓰기</a>
+    <a class="btn btn-primary float-end" th:href="@{/board/create}">글쓰기</a>
     <div class="list-board">
         <table class="table table-hover">
             <tbody>
@@ -23,7 +23,7 @@
                     글 번호 표시 공간
                 </td>
                 <td>
-                    <a class="link-title" th:href="@{|board/${board.id}|}" th:text="${board.title}">
+                    <a class="link-title" th:href="@{|/board/${board.id}|}" th:text="${board.title}">
                         글 제목 표시 공간
                     </a>
                 </td>
@@ -34,13 +34,62 @@
             </tbody>
         </table>
     </div>
-    <nav aria-label="Page navigation example">
+    <nav class="float-end" aria-label="board pagination">
         <ul class="pagination">
-            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+            <th:block th:if="${startPageNum} > 1">
+                <li class="page-item">
+                    <a class="page-link" th:href="@{/board(page=1)}" aria-label="first">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" th:href="@{/board(page=${startPageNum}-1)}" aria-label="previous">
+                        <span aria-hidden="true">&lt;</span>
+                    </a>
+                </li>
+            </th:block>
+            <th:block th:unless="${startPageNum} > 1">
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&laquo;</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&lt;</span>
+                </li>
+            </th:block>
+
+            <th:block th:each="pageNum : ${#numbers.sequence(startPageNum,endPageNum)}">
+                <th:block th:if="${pageNum} == ${requestedPageNum}">
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link" th:text="${pageNum}">1</span>
+                    </li>
+                </th:block>
+                <th:block th:unless="${pageNum} == ${requestedPageNum}">
+                    <li class="page-item">
+                        <a class="page-link" th:href="@{/board(page=${pageNum})}" th:text="${pageNum}">1</a>
+                    </li>
+                </th:block>
+            </th:block>
+
+            <th:block th:if="${totalPagesNum} > ${endPageNum}">
+                <li class="page-item">
+                    <a class="page-link" th:href="@{/board(page=${endPageNum}+1)}" aria-label="next">
+                        <span aria-hidden="true">&gt;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" th:href="@{/board(page=${totalPagesNum})}" aria-label="end">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </th:block>
+            <th:block th:unless="${totalPagesNum} > ${endPageNum}">
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&gt;</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&raquo;</span>
+                </li>
+            </th:block>
         </ul>
     </nav>
 </div>
