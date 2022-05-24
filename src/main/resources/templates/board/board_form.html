@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko-KR">
-<head th:replace="~{fragment/fragment_head :: head (~{::title},~{::th:block})}">
+<html lang="ko-KR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragment/fragment_head :: head (~{::title},~{::head-block})}">
     <meta charset="UTF-8">
     <title>bluesky-글 쓰기</title>
-    <th:block>
+    <th:block th:fragment="head-block">
         <link rel="stylesheet" href="/css/board-form.css"/>
     </th:block>
 </head>
