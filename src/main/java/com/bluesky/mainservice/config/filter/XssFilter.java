@@ -27,7 +27,7 @@ public class XssFilter extends XssEscapeServletFilter {
         if (isExcludeUrl(url)) {
             chain.doFilter(request, response);
         } else {
-            log.info("url : {}", url);
+            log.debug("url : {}", url);
             super.doFilter(request, response, chain);
         }
     }
