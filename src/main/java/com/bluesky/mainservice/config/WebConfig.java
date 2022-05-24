@@ -3,7 +3,7 @@ package com.bluesky.mainservice.config;
 import com.bluesky.mainservice.config.argumentresolver.MobilePageArgumentResolver;
 import com.bluesky.mainservice.config.filter.XssFilter;
 import com.bluesky.mainservice.config.interceptor.XssInterceptor;
-import org.springframework.boot.autoconfigure.web.ErrorProperties;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +11,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.persistence.EntityManager;
 import javax.servlet.*;
 import java.util.List;
 
@@ -36,5 +37,10 @@ public class WebConfig implements WebMvcConfigurer {
         filterRegistrationBean.setFilter(new XssFilter());
         filterRegistrationBean.addUrlPatterns("/*");
         return filterRegistrationBean;
+    }
+
+    @Bean
+    public JPAQueryFactory jpaQueryFactory(EntityManager em){
+        return new JPAQueryFactory(em);
     }
 }
