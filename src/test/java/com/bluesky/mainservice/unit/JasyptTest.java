@@ -1,17 +1,19 @@
-package com.bluesky.mainservice;
+package com.bluesky.mainservice.unit;
 
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
-public class JasyptTest {
+class JasyptTest {
 
     @Test
+    @DisplayName("암복호화 테스트")
     void EncryptorTest() {
         //given
-        String password = "My Awesome Password";
+        String password = "ABC/123-!@#";
         String msg = "Hello World";
 
         StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
@@ -28,6 +30,5 @@ public class JasyptTest {
 
         //then
         Assertions.assertThat(decryptedMsg).isEqualTo(msg);
-        log.debug("msg : {}, decryptedMsg : {}", msg, decryptedMsg);
     }
 }
