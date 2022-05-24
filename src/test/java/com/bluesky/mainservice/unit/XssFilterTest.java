@@ -29,7 +29,7 @@ import java.io.IOException;
 
 @Slf4j
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class XssFilterTest {
+class XssFilterTest {
 
     private XssFilter filter = new XssFilter();
     private MockHttpServletRequest request = new MockHttpServletRequest();
@@ -52,8 +52,6 @@ public class XssFilterTest {
         //then
         String filteredContent = filterChain.getRequest().getParameter("content");
         Assertions.assertThat(filteredContent).contains("<!-- Not Allowed Tag Filtered");
-        log.info("before : {}", content);
-        log.info("after : {}", filteredContent);
     }
 
     @Test
@@ -71,8 +69,6 @@ public class XssFilterTest {
         //then
         String filteredContent = filterChain.getRequest().getParameter("content");
         Assertions.assertThat(filteredContent).doesNotContain("<!-- Not Allowed Tag Filtered");
-        log.info("before : {}", content);
-        log.info("after : {}", filteredContent);
     }
 
     @Test
@@ -90,8 +86,6 @@ public class XssFilterTest {
         //then
         String filteredContent = filterChain.getRequest().getParameter("content");
         Assertions.assertThat(filteredContent).contains("<!-- Not Allowed Attribute Filtered");
-        log.info("before : {}", content);
-        log.info("after : {}", filteredContent);
     }
 
     @Test
@@ -109,8 +103,6 @@ public class XssFilterTest {
         //then
         String filteredContent = filterChain.getRequest().getParameter("content");
         Assertions.assertThat(filteredContent).doesNotContain("<!-- Not Allowed Attribute Filtered");
-        log.info("before : {}", content);
-        log.info("after : {}", filteredContent);
     }
 }
 
