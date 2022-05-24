@@ -14,6 +14,6 @@ class Options {
     //1개의 페이지에 담기게 될 요소의 수
     static final int PAGE_SIZE = 10;
 
-    //페이지 네비게이션에 표시될 페이지의 수
-    static final int PAGINATION_SIZE = 10;
+    //페이지네비게이션 크기: 값이 N이면 네비게이션 바에 페이지 이동 버튼이 N개 있음
+    static final int PAGE_NAVIGATION_SIZE = 10;
 }
