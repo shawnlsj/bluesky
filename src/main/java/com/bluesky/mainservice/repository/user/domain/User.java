@@ -2,10 +2,13 @@ package com.bluesky.mainservice.repository.user.domain;
 
 import com.bluesky.mainservice.repository.BaseTimeEntity;
 import com.bluesky.mainservice.repository.user.constant.AccountType;
+import com.bluesky.mainservice.repository.user.constant.RoleType;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.Hibernate;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -69,5 +72,24 @@ public class User extends BaseTimeEntity {
 
     public void updateNickName(String nickname) {
         this.nickname = nickname;
+    }
+
+    @PostLoad
+    public void initRole() {
+        Hibernate.initialize(userRoles);
+        Hibernate.initialize(userRoles.get(0).getRole());
+    }
+
+    public boolean isRegisteredUser() {
+        return StringUtils.hasText(nickname);
+    }
+
+    public boolean isAdmin() {
+        for (UserRole userRole : userRoles) {
+            if (userRole.getRole().getRoleType() == RoleType.USER) {
+                return false;
+            }
+        }
+        return true;
     }
 }
