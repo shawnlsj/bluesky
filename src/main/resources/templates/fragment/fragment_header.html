@@ -1,0 +1,63 @@
+<div class="header-container" th:fragment="header">
+    <div class="container-fluid">
+        <!-- 데스크탑 화면 -->
+        <nav class="navbar navbar-expand-md d-none d-md-flex navbar-light">
+            <a class="navbar-brand" th:href="@{/}">
+                <img class="img-logo" src="/images/logo.png" alt="bluesky">
+            </a>
+            <ul class="navbar-nav ms-md-4">
+                <li class="nav-item">
+                    <a class="nav-link active" th:href="@{/board}">자유 게시판</a>
+                </li>
+            </ul>
+            <div class="navbar-nav ms-md-auto">
+                <th:block th:if="${isLoginUser}">
+                    <a class="nav-item nav-link active"
+                       th:href="@{/mypage}">마이페이지</a>
+                    <a class="nav-item nav-link active" th:href="@{/logout}">로그아웃</a>
+                </th:block>
+                <th:block th:unless="${isLoginUser}">
+                    <a class="nav-item nav-link active"
+                       th:href="@{/login(originUrl=${#request.getRequestURL()})}">로그인</a>
+                    <a class="nav-item nav-link active" th:href="@{/join}">회원가입</a>
+                </th:block>
+            </div>
+        </nav>
+        <!-- 모바일 화면 -->
+        <nav class="navbar navbar-expand-md navbar-light row d-md-none">
+            <div class="col-4">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <div class="col-4 text-center">
+                <a class="navbar-brand" th:href="@{/}">
+                    <img class="img-logo" src="/images/logo.png" alt="bluesky">
+                </a>
+            </div>
+            <div class="col-4"></div>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-md-4">
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/board}">자유 게시판</a>
+                    </li>
+                </ul>
+                <div class="navbar-nav ms-md-auto">
+                    <th:block th:if="${isLoginUser}">
+                        <a class="nav-item nav-link active"
+                           th:href="@{/mypage}">마이페이지</a>
+                        <a class="nav-item nav-link active" th:href="@{/logout}">로그아웃</a>
+                    </th:block>
+                    <th:block th:unless="${isLoginUser}">
+                        <a class="nav-item nav-link active"
+                           th:href="@{/login(originUrl=${#request.getRequestURL()})}">로그인</a>
+                        <a class="nav-item nav-link active" th:href="@{/join}">회원가입</a>
+                    </th:block>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <hr>
+</div>
