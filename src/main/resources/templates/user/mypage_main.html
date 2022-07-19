@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko-KR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragment/fragment_head :: head (~{::title},~{::head-block})}">
+    <meta charset="UTF-8">
+    <title>bluesky - 마이페이지</title>
+    <th:block th:fragment="head-block">
+        <link rel="stylesheet" href="/css/user/mypage.css"/>
+    </th:block>
+</head>
+<body>
+<div class="body-wrapper">
+    <div class="header" th:replace="fragment/fragment_header :: header"></div>
+    <div class="body-container container-fluid d-md-flex">
+        <div class="col-md-2 col-2 d-md-block d-none">
+            <div>
+                <div class="mt-5">
+                    <i class="bi bi-list fs-5"></i>
+                    <span class="fw-bold">메뉴</span>
+                </div>
+                <div class="mt-1">
+                    <i class="bi bi-arrow-return-right"></i>
+                    <a class="link-dark" href="#">내 정보</a>
+                </div>
+                <div class="mt-2">
+                    <i class="bi bi-arrow-return-right"></i>
+                    <a class="link-dark" href="#">나의 게시글</a>
+                </div>
+                <div class="mt-2">
+                    <i class="bi bi-arrow-return-right"></i>
+                    <a class="link-dark" href="#">나의 댓글</a>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 col-md-8 mb-4">
+            <div class="text-center">
+                <h1 class="fs-3">내 정보</h1>
+            </div>
+            <div class="mt-5 d-flex justify-content-center">
+                <div>
+                    <div class="mt-4">
+                        <div>
+                            <span class="fw-bold pe-4 span-title">닉네임</span><span
+                                th:text="${userAccount.nickname}"></span>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div>
+                            <span class="fw-bold span-title">이메일</span><span
+                                th:text="${userAccount.maskedEmail}"></span>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div>
+                            <span class="fw-bold span-title">계정 타입</span><span
+                                th:text="${userAccount.accountType}"></span>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div>
+                            <span class="fw-bold span-title">가입일</span><span
+                                th:text="${#temporals.format(userAccount.getJoinDate(),'yyyy-MM-dd')}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-md-none mt-5 mb-5">
+            <div class="dropdown d-grid">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                    메뉴
+                </button>
+                <ul class="dropdown-menu w-100 text-center" aria-labelledby="dropdownMenuButton1">
+                    <li><a class="dropdown-item" href="#">내 정보</a></li>
+                    <li><a class="dropdown-item" href="#">나의 게시글</a></li>
+                    <li><a class="dropdown-item" href="#">나의 댓글</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="footer" th:replace="fragment/fragment_footer :: footer"></div>
+</div>
+</body>
+</html>
