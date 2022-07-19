@@ -1,4 +1,4 @@
-import {MAX_EMAIL_LENGTH} from "/js/config/option.js";
+import {MAX_EMAIL_LENGTH} from "/js/config/user_option.js";
 
 class EmailValidator {
     static emailForm = document.getElementById("email");
