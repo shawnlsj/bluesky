@@ -1,37 +1,59 @@
 spring:
   profiles:
-    active: "local"
+    active: local
+    include: oauth
 ---
 spring:
+  security:
+    filter:
+      order: 0
+      dispatcher-types: request
+
   config:
     activate:
-      on-profile: "local"
+      on-profile: local
+
   datasource:
     url: jdbc:mysql://localhost:3306/bluesky
     username: root
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-#h2 설정
-#spring:
-#  datasource:
-#    url: jdbc:h2:tcp://localhost/~/test
-#    username: sa
-#    password:
-#    driver-class-name: org.h2.Driver
+
+  #h2 설정
+  #spring:
+  #  datasource:
+  #    url: jdbc:h2:tcp://localhost/~/test
+  #    username: sa
+  #    password:
+  #    driver-class-name: org.h2.Driver
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
         default_batch_fetch_size: 100
+        use_sql_comments: true
+    open-in-view: false
 
   mvc:
     hiddenmethod:
       filter:
         enabled: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: shawnlsj09@gmail.com
+    password: ENC(ohXZdGb84MhDz1AqaQfs1St14rp82HWEgFo4rUypx2Y=)
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 logging:
   level:
@@ -42,3 +64,18 @@ decorator:
   datasource:
     p6spy:
       enable-logging: true
+
+server:
+  ssl:
+    key-store: local_keystore
+    key-store-type: PKCS12
+    key-store-password: 123456
+    key-alias: localkey
+  port: 8443
+  servlet:
+    session:
+      cookie:
+        name: __Host-sessionId
+  tomcat:
+    relaxed-path-chars: <,>,{,},[,],^,`,\,|
+    relaxed-query-chars: <,>,{,},[,],^,`,\,|
