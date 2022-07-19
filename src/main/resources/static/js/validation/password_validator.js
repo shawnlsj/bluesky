@@ -1,4 +1,4 @@
-import {MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH} from "/js/config/option.js";
+import {MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH} from "/js/config/user_option.js";
 
 class PasswordValidator {
     static passwordForm = document.getElementById("password");
