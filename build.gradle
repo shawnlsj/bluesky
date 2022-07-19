@@ -35,15 +35,18 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
     implementation 'org.springframework.mobile:spring-mobile-starter:2.0.0.M3'
 
-    implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.0.0' // 웹 테스트 자동화 라이브러리
-    implementation 'org.apache.poi:poi-ooxml:5.2.2' // MS오피스 다루는 라이브러리
     implementation "com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.0" // 로깅 라이브러리
-    implementation "com.navercorp.lucy:lucy-xss-servlet:2.0.0" // xss 방어 라이브러리
+    implementation 'com.navercorp.lucy:lucy-xss-servlet:2.0.1' // xss 방어 라이브러리
     implementation "com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4" // 암호화 라이브러리
 
-//	runtimeOnly 'com.h2database:h2'
     runtimeOnly 'mysql:mysql-connector-java:8.0.29'
 
     compileOnly 'org.projectlombok:lombok'
