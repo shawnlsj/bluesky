@@ -31,17 +31,13 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new AdminUrlInterceptor())
-                .order(0)
-                .addPathPatterns("/admin/**");
-
         registry.addInterceptor(new FilteredXssCheckInterceptor())
-                .order(1)
+                .order(0)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/css/**", "/js/**");
 
         registry.addInterceptor(new ResolveViewModeInterceptor())
-                .order(2)
+                .order(1)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/css/**", "/js/**");
     }
