@@ -1,0 +1,58 @@
+.container-fluid {
+    max-width: 450px;
+    margin: 50px auto;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.img-logo {
+    width: 120px;
+}
+
+.layout-btn {
+    border-radius: 0.25rem;
+    line-height: 3.0rem;
+}
+
+.layout-btn-kakao {
+    background: #fee500;
+    color: #000;
+}
+
+.layout-btn-google {
+    border: 1px solid #acacac;
+    color: #000;
+}
+
+.layout-btn-naver {
+    font-weight: 400;
+    background: #03c75a;
+    color: #fff;
+}
+
+.item-icon {
+    width: 1.4rem;
+    height: auto;
+    margin-left: 1rem;
+}
+
+.item-text {
+    margin-right: 2.4rem;
+}
+
+.message-resend {
+    font-size: 0.9rem
+}
+
+.btn {
+    height: 3.0rem;
+}
+
+.btn-join{
+    height: 3.0rem;
+}
+
+input {
+    height: 3.0rem;
+}
+
