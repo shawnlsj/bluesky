@@ -1,7 +1,6 @@
 package com.bluesky.mainservice.config;
 
 import com.bluesky.mainservice.config.filter.RefererCheckFilter;
-import com.bluesky.mainservice.config.interceptor.AdminUrlInterceptor;
 import com.bluesky.mainservice.config.interceptor.ResolveViewModeInterceptor;
 import com.bluesky.mainservice.controller.argument.argumentresolver.LoginUserArgumentResolver;
 import com.bluesky.mainservice.controller.argument.argumentresolver.MobilePageArgumentResolver;

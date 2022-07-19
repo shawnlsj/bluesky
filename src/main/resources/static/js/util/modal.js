@@ -1,24 +1,46 @@
 const successModalElement = document.getElementById("successModal");
 const successModalBody = document.getElementById("successModalBody");
-const successModal = new bootstrap.Modal(successModalElement);
+const successModal = initSuccessModal();
 const failModalElement = document.getElementById("failModal");
 const failModalBody = document.getElementById("failModalBody");
-const failModal = new bootstrap.Modal(failModalElement)
+const failModal = initFailModal();
 
-successModalElement.addEventListener("shown.bs.modal", function () {
-    document.activeElement.blur();
-});
-
-failModalElement.addEventListener("shown.bs.modal", function () {
-    document.activeElement.blur();
-});
-
-document.addEventListener("keypress", function (event) {
-    if (event.key === "Enter") {
-        successModal.hide();
-        failModal.hide();
+function initSuccessModal() {
+    if (successModalElement !== null) {
+        return new bootstrap.Modal(successModalElement);
     }
-});
+    return null;
+}
+
+function initFailModal() {
+    if (failModalElement !== null) {
+        return new bootstrap.Modal(failModalElement);
+    }
+    return null;
+}
+
+(function init() {
+    document.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            if (successModal !== null) {
+                successModal.hide();
+            }
+            if (failModal !== null) {
+                failModal.hide();
+            }
+        }
+    });
+    if (successModalElement !== null) {
+        successModalElement.addEventListener("shown.bs.modal", function () {
+            document.activeElement.blur();
+        });
+    }
+    if (failModalElement !== null) {
+        failModalElement.addEventListener("shown.bs.modal", function () {
+            document.activeElement.blur();
+        });
+    }
+})();
 
 export function showSuccessModal(message) {
     if (message !== undefined) {
@@ -33,3 +55,5 @@ export function showFailModal(message) {
     }
     failModal.show();
 }
+
+export {successModal, successModalBody, failModal, failModalBody};
