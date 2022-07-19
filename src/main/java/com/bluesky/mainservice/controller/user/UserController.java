@@ -1,11 +1,17 @@
 package com.bluesky.mainservice.controller.user;
 
+import com.bluesky.mainservice.config.security.jwt.JwtGenerator;
 import com.bluesky.mainservice.config.security.jwt.JwtMapper;
-import com.bluesky.mainservice.config.security.jwt.JwtProvider;
+import com.bluesky.mainservice.config.security.jwt.ResetPasswordTokenInfo;
+import com.bluesky.mainservice.config.security.jwt.TokenType;
+import com.bluesky.mainservice.controller.argument.LoginUser;
 import com.bluesky.mainservice.controller.user.dto.JoinForm;
 import com.bluesky.mainservice.controller.user.dto.OAuth2JoinForm;
+import com.bluesky.mainservice.controller.user.dto.PasswordParam;
+import com.bluesky.mainservice.controller.validation.Password;
 import com.bluesky.mainservice.repository.user.constant.AccountType;
 import com.bluesky.mainservice.service.user.UserService;
+import com.bluesky.mainservice.service.user.dto.JoinInProgressUserInfo;
 import com.bluesky.mainservice.service.user.dto.LoginTokenSet;
 import com.bluesky.mainservice.service.user.dto.UserAccountInfo;
 import com.bluesky.mainservice.service.user.dto.UserRegisterData;
@@ -17,7 +23,6 @@ import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -25,14 +30,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 
 import static com.bluesky.mainservice.controller.user.dto.UserResponseDto.JoinUserInfo;
+import static com.bluesky.mainservice.controller.user.dto.UserResponseDto.UserAccount;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,7 +46,38 @@ import static com.bluesky.mainservice.controller.user.dto.UserResponseDto.JoinUs
 public class UserController {
 
     private final UserService userService;
-    private final JwtProvider jwtProvider;
+    private final JwtGenerator jwtGenerator;
+
+    @GetMapping("/mypage")
+    public String mypage(LoginUser loginUser, Model model) {
+        UserAccountInfo userAccountInfo = userService.createUserAccountInfo(loginUser.getUuid());
+        String maskedEmail = RegexUtils.maskingEmail(userAccountInfo.getEmail());
+        String accountType = "";
+        switch (userAccountInfo.getAccountType()) {
+            case ORIGINAL:
+                accountType = "이메일 회원가입";
+                break;
+            case GOOGLE:
+                accountType = "간편가입 (구글)";
+                break;
+            case KAKAO:
+                accountType = "간편가입 (카카오)";
+                break;
+            case NAVER:
+                accountType = "간편가입 (네이버)";
+                break;
+        }
+        UserAccount userAccount = UserAccount.builder()
+                .maskedEmail(maskedEmail)
+                .nickname(userAccountInfo.getNickname())
+                .accountType(accountType)
+                .joinDate(userAccountInfo.getRegisterDate())
+                .build();
+
+        model.addAttribute("isLoginUser", true);
+        model.addAttribute("userAccount", userAccount);
+        return "user/mypage_main";
+    }
 
     @GetMapping("/login")
     public String loginForm(@RequestParam(required = false) String originUrl, HttpServletRequest request, HttpServletResponse response) {
@@ -55,9 +92,10 @@ public class UserController {
         return "user/login_form";
     }
 
+    //로그인 실패 시 포워딩 여기로 포워딩 됨
     @PostMapping("/login")
-    public String failedLoginForm(@RequestParam String username, Model model) {
-        model.addAttribute("email", username);
+    public String failedLoginForm(@RequestParam String email, Model model) {
+        model.addAttribute("email", email);
         return "user/login_form";
     }
 
@@ -69,18 +107,17 @@ public class UserController {
             return "user/join_verification";
         }
 
-        //유저 계정 정보를 가져온다
-        UserAccountInfo userAccountInfo = userService.createUserAccountInfo(token);
+        //가입하려는 유저의 정보를 가져온다
+        JoinInProgressUserInfo joinInProgressUserInfo = userService.createJoinInProgressUserInfo(token);
 
         //이메일 가입 유저인 경우 시간 연장을 위해 토큰을 다시 발급
-        boolean isOriginalUser = (userAccountInfo.getAccountType() == AccountType.ORIGINAL);
+        boolean isOriginalUser = (joinInProgressUserInfo.getAccountType() == AccountType.ORIGINAL);
         if (isOriginalUser) {
-            token = jwtProvider.generateJoinToken(userAccountInfo.getEmail(), AccountType.ORIGINAL);
+            token = jwtGenerator.generateJoinToken(joinInProgressUserInfo.getEmail(), AccountType.ORIGINAL);
         }
 
-
-        //화면에서 사용할 dto 생성
-        String maskedEmail = RegexUtils.maskingEmail(userAccountInfo.getEmail());
+        //화면에서 사용할 정보를 담는다
+        String maskedEmail = RegexUtils.maskingEmail(joinInProgressUserInfo.getEmail());
         JoinUserInfo joinUserInfo = new JoinUserInfo(token, maskedEmail, isOriginalUser);
         model.addAttribute("joinUserInfo", joinUserInfo);
         model.addAttribute("userSaveForm", new JoinForm());
@@ -88,17 +125,17 @@ public class UserController {
     }
 
     @GetMapping("/join/complete")
-    public String complete(HttpServletRequest request, HttpServletResponse response, Model model) {
+    public String joinComplete(HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
         //쿠키에서 가입 완료된 사용자의 닉네임을 획득
         String nickname = CookieUtils.resolveMessageCookie(request);
 
         //저장되어 있는 닉네임이 없는 경우 404 예외를 던짐
         if (!StringUtils.hasText(nickname)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return null;
         }
 
         model.addAttribute("nickname", nickname);
-
         CookieUtils.removeMessageCookie(response, "/join/complete");
         return "user/join_complete";
     }
@@ -140,13 +177,53 @@ public class UserController {
         return "redirect:/join/complete";
     }
 
-    @ExceptionHandler(value = {UserAlreadyRegisteredException.class, UserNotFoundException.class, JwtException.class})
+    @GetMapping("/reset-password")
+    public String resetPasswordForm(@RequestParam(required = false) String token, Model model) {
+        //토큰이 없으면 이메일 인증 화면으로 이동
+        if (!StringUtils.hasText(token)) {
+            return "user/reset_password_verification";
+        }
+
+        //유효하지 않은 토큰이면 예외 발생
+        if (!jwtGenerator.isValid(token, TokenType.RESET_PASSWORD)) {
+            throw new JwtException("유효한 토큰이 아닙니다.");
+        }
+
+        //시간 연장을 위해 토큰을 새로 발급
+        ResetPasswordTokenInfo resetPasswordTokenInfo = jwtGenerator.parseResetPasswordToken(token);
+        token = jwtGenerator.generateResetPasswordToken(resetPasswordTokenInfo.getUserId());
+        model.addAttribute("token", token);
+        return "user/reset_password_form";
+    }
+
+    @PostMapping("/reset-password")
+    public String resetPassword(@RequestParam String token,
+                                @Valid PasswordParam passwordParam ,
+                                HttpServletResponse response) {
+        userService.resetPassword(token, passwordParam.getPassword());
+        Cookie cookie = CookieUtils.createMessageCookie("비밀번호 변경 완료", "/reset-password/complete");
+        response.addCookie(cookie);
+        return "redirect:/reset-password/complete";
+    }
+
+    @GetMapping("/reset-password/complete")
+    public String resetPasswordComplete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String message = CookieUtils.resolveMessageCookie(request);
+        if (!StringUtils.hasText(message)) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return null;
+        }
+        CookieUtils.removeMessageCookie(response, "/reset-password/complete");
+        return "user/reset_password_complete";
+    }
+
+    @ExceptionHandler(value = {UserAlreadyRegisteredException.class, JwtException.class})
     public String joinProcessHandler(Exception e, HttpServletResponse response) {
+
+        log.info("회원 가입 진행 중 예외 발생", e);
         String message = "";
         if (e instanceof UserAlreadyRegisteredException) {
             message = "이미 가입이 완료된 상태입니다.";
-        } else if (e instanceof UserNotFoundException) {
-            message = "존재하지 않는 사용자입니다.";
         } else if (e instanceof JwtException) {
             message = "존재하지 않거나 시간이 지나 만료된 페이지입니다.";
         }
@@ -154,8 +231,18 @@ public class UserController {
         return "redirect:/";
     }
 
+    @ExceptionHandler(value = UserNotFoundException.class)
+    public String handlerUserNotFoundEx(UserNotFoundException e, HttpServletResponse response) {
+        log.info("유저를 찾을 수 없음", e);
+        String message = "존재하지 않는 사용자입니다.";
+        response.addCookie(CookieUtils.createMessageCookie(message));
+        return "redirect:/";
+    }
+
     @ExceptionHandler(value = DataAccessException.class)
-    public String handleDataAccessEx(HttpServletResponse response) {
+    public String handleDataAccessEx(DataAccessException e, HttpServletResponse response) {
+
+        log.info("데이터베이스 에러 발생", e);
         String message = "서버에 일시적인 오류가 발생하였습니다.";
         response.addCookie(CookieUtils.createMessageCookie(message));
         return "redirect:/";
