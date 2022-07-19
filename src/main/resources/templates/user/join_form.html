@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko-KR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragment/fragment_head :: head (~{::title},~{::head-block})}">
+    <meta charset="UTF-8">
+    <title>bluesky 회원 가입 - 정보 입력</title>
+    <th:block th:fragment="head-block">
+        <link rel="stylesheet" href="/css/user/anonymous_page.css"/>
+        <script type="module" src="/js/user/join_form.js" defer></script>
+    </th:block>
+</head>
+<body>
+<div id="failModal" class="modal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="modalFailTitle" class="fw-bold modal-title">
+                    <i class="me-2 bi bi-exclamation-triangle"></i>회원가입 실패
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body mt-1 mb-1">
+                <span id="failModalMessage">서버에 오류가 발생하였습니다. 잠시 후 다시 시도해주세요.</span>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-bs-dismiss="modal">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="text-center">
+        <a th:href="@{/}">
+            <img class="img-logo" src="/images/logo.png" alt="bluesky">
+        </a>
+    </div>
+    <div class="mt-5 text-center">
+        <h1 class="fs-4 fw-bold" th:if="${joinUserInfo.isOriginalUser()}">가입 정보 입력</h1>
+        <h1 class="fs-4 fw-bold" th:unless="${joinUserInfo.isOriginalUser()}">추가 정보 입력</h1>
+    </div>
+    <div class="mt-5">
+        <form id="joinForm" method="post" th:action="@{${joinUserInfo.joinUrl}}" th:object="${userSaveForm}" novalidate>
+            <input type="hidden" name="token" th:value="${joinUserInfo.getToken()}">
+            <th:block th:if="${joinUserInfo.isOriginalUser()}">
+                <div class="mb-4">
+                    <label for="email" class="form-label">이메일</label>
+                    <input id="email" class="form-control" th:placeholder="${joinUserInfo.maskedEmail}" disabled>
+                </div>
+                <div class="mb-4">
+                    <label for="nickname" class="form-label">닉네임</label>
+                    <input id="nickname" class="form-control" th:field="*{nickname}" type="text" autocomplete="off">
+                    <div class="valid-feedback">사용 가능한 닉네임입니다.</div>
+                    <div id="nicknameInvalidFeedback" class="invalid-feedback"></div>
+                    <div class="form-text">2자 이상 16자 이하, 다른 사용자와 중복 불가능</div>
+                </div>
+                <div class="mb-4">
+                    <label for="password" class="form-label">비밀번호</label>
+                    <input id="password" class="form-control" th:field="*{password}" type="password">
+                    <div id="passwordInvalidFeedback" class="invalid-feedback"></div>
+                    <div class="form-text">8자 이상, 영문/숫자/특수문자 중 2종류 이상 사용</div>
+                </div>
+                <div class="mb-5">
+                    <label for="passwordCheck" class="form-label">비밀번호 확인</label>
+                    <input id="passwordCheck" class="form-control" type="password">
+                    <div id="passwordCheckInvalidFeedback" class="invalid-feedback">비밀번호가 일치하지 않습니다.</div>
+                    <div class="form-text">비밀번호를 한번 더 입력해 주세요.</div>
+                </div>
+            </th:block>
+            <th:block th:unless="${joinUserInfo.isOriginalUser()}">
+                <div class="mb-5">
+                    <label for="nickname" class="form-label">닉네임</label>
+                    <input id="nickname" class="form-control" th:field="*{nickname}" type="text" autocomplete="off">
+                    <div class="valid-feedback">사용 가능한 닉네임입니다.</div>
+                    <div id="nicknameInvalidFeedback" class="invalid-feedback"></div>
+                    <div class="form-text">2자 이상 16자 이하, 다른 사용자와 중복 불가능</div>
+                </div>
+            </th:block>
+            <div class="d-grid mt-4">
+                <button id="sendButton" class="btn btn-primary btn-join fw-bold toggle-block" data-display="true" type="submit">
+                    가입하기
+                </button>
+                <button id="sendButtonSpinner" class="btn btn-primary toggle-block" data-display="false" type="button"
+                        disabled>
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span class="visually-hidden">로딩 중...</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
