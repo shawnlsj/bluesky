@@ -7,6 +7,7 @@ import {EmailValidator} from "/js/validation/email_validator.js";
 
     EmailValidator.initEventListener();
 
+    //로그인에 실패하여 이메일 폼에 값이 남아있는 경우에는 failModal 을 띄움
     if (emailForm.value !== "") {
         showFailModal();
     }
