@@ -1,8 +1,6 @@
-package com.bluesky.mainservice.controller.util;
+package com.bluesky.mainservice.controller.user.email;
 
-import com.bluesky.mainservice.config.security.jwt.JwtGenerator;
-import com.bluesky.mainservice.controller.util.exception.MailSendingException;
-import com.bluesky.mainservice.repository.user.constant.AccountType;
+import com.bluesky.mainservice.controller.user.email.exception.MailSendingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
@@ -31,13 +29,14 @@ public class EmailSender {
 
 
     @Async("sendMailExecutor")
-    public void sendAuthenticationMail(String targetEmail, String destinationUrl, String token) {
+    public void sendAuthenticationMail(SendAuthenticationMailParam param) {
 
         try {
             //템플릿 엔진에 넘겨줄 변수 세팅
             Context context = new Context();
-            context.setVariable("destinationUrl", destinationUrl);
-            context.setVariable("token", token);
+            context.setVariable("destinationUrl", param.getDestinationUrl());
+            context.setVariable("token", param.getToken());
+            context.setVariable("serverName",param.getServerName());
 
             //HTML body 생성
             String html = templateEngine.process("user/join_email", context);
@@ -47,7 +46,7 @@ public class EmailSender {
             MimeMessageHelper messageHelper = new MimeMessageHelper(message, MULTIPART_MODE_NO, UTF_8);
             messageHelper.setSubject("bluesky 메일인증 안내");
             messageHelper.setFrom("shawnlsj09@gmail.com","bluesky");
-            messageHelper.setTo(targetEmail);
+            messageHelper.setTo(param.getTargetEmail());
             messageHelper.setText(html, true);
 
             //메일 전송
@@ -62,13 +61,14 @@ public class EmailSender {
     }
 
     @Async("sendMailExecutor")
-    public void sendResetPasswordMail(String targetEmail, String destinationUrl,String token) {
+    public void sendResetPasswordMail(SendResetPasswordMailParam param) {
 
         try {
             //템플릿 엔진에 넘겨줄 변수 세팅
             Context context = new Context();
-            context.setVariable("destinationUrl", destinationUrl);
-            context.setVariable("token", token);
+            context.setVariable("destinationUrl", param.getDestinationUrl());
+            context.setVariable("token", param.getToken());
+            context.setVariable("serverName",param.getServerName());
 
             //HTML body 생성
             String html = templateEngine.process("user/reset_password_email", context);
@@ -78,7 +78,7 @@ public class EmailSender {
             MimeMessageHelper messageHelper = new MimeMessageHelper(message, MULTIPART_MODE_NO, UTF_8);
             messageHelper.setSubject("bluesky 비밀번호 재설정 안내");
             messageHelper.setFrom("shawnlsj09@gmail.com","bluesky");
-            messageHelper.setTo(targetEmail);
+            messageHelper.setTo(param.getTargetEmail());
             messageHelper.setText(html, true);
 
             //메일 전송
