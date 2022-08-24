@@ -126,7 +126,7 @@ public class JwtGenerator {
                 .compact();
     }
 
-    public AccessTokenInfo parseAccessToken(String accessToken) {
+    public AccessTokenParseData parseAccessToken(String accessToken) {
         Claims body = getBody(accessToken);
 
         if (!checkTokenType(body, TokenType.ACCESS)) {
@@ -135,10 +135,10 @@ public class JwtGenerator {
 
         UUID userId = UUID.fromString(body.get(ClaimKey.USER_ID, String.class));
         boolean isAdmin = body.get(ClaimKey.ADMIN, Boolean.class);
-        return new AccessTokenInfo(userId, isAdmin);
+        return new AccessTokenParseData(userId, isAdmin);
     }
 
-    public RefreshTokenInfo parseRefreshToken(String refreshToken) {
+    public RefreshTokenParseData parseRefreshToken(String refreshToken) {
         Claims body = getBody(refreshToken);
 
         if (!checkTokenType(body, TokenType.REFRESH)) {
@@ -147,10 +147,10 @@ public class JwtGenerator {
 
         UUID tokenId = UUID.fromString(body.get(ClaimKey.TOKEN_ID, String.class));
         Date expirationTime = body.getExpiration();
-        return new RefreshTokenInfo(tokenId, expirationTime.getTime());
+        return new RefreshTokenParseData(tokenId, expirationTime.getTime());
     }
 
-    public JoinTokenInfo parseJoinToken(String joinToken) {
+    public JoinTokenParseData parseJoinToken(String joinToken) {
         Claims body = getBody(joinToken);
 
         if (!checkTokenType(body, TokenType.JOIN)) {
@@ -159,10 +159,10 @@ public class JwtGenerator {
 
         String userId = encryptor.decrypt(body.get(ClaimKey.USER_ID, String.class));
         AccountType accountType = AccountType.valueOf(body.get(ClaimKey.ACCOUNT_TYPE, String.class));
-        return new JoinTokenInfo(userId, accountType);
+        return new JoinTokenParseData(userId, accountType);
     }
 
-    public ResetPasswordTokenInfo parseResetPasswordToken(String resetPasswordToken) {
+    public ResetPasswordTokenParseData parseResetPasswordToken(String resetPasswordToken) {
         Claims body = getBody(resetPasswordToken);
 
         if (!checkTokenType(body, TokenType.RESET_PASSWORD)) {
@@ -170,11 +170,16 @@ public class JwtGenerator {
         }
 
         UUID userId = UUID.fromString(body.get(ClaimKey.USER_ID, String.class));
-        return new ResetPasswordTokenInfo(userId);
+        return new ResetPasswordTokenParseData(userId);
     }
 
     private Claims getBody(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+        try {
+            return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+        } catch (JwtException e) {
+            log.info("invalid token", e);
+            throw e;
+        }
     }
 
     private boolean checkTokenType(Claims body, TokenType tokenType) {
@@ -188,9 +193,7 @@ public class JwtGenerator {
             if (checkTokenType(body, tokenType)) {
                 return true;
             }
-        } catch (JwtException e) {
-            log.info("invalid token", e);
-        }
+        } catch (JwtException ignored) {}
         return false;
     }
 
