@@ -1,0 +1,24 @@
+.link-title {
+    text-decoration-line: none;
+    color: black;
+}
+
+.board-list-container {
+    min-height: 30vh;
+}
+
+.board-signature-profile {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.board-list-search-bar {
+    width: 100%;
+    max-width: 450px;
+}
+
+.reply-symbol {
+    position: relative;
+    top: -5px;
+}
