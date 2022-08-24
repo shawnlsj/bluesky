@@ -14,6 +14,14 @@
     welcomeMessage();
 })();
 
+function toggleDisplayStatus(element) {
+    if (element.getAttribute("data-display") === "true") {
+        displayOff(element);
+    } else {
+        displayOn(element);
+    }
+}
+
 function displayOn(element) {
     element.setAttribute("data-display", "true");
 }
@@ -50,4 +58,12 @@ function isInvalidStatus(inputElement) {
 
 function hasWhiteSpace(string) {
     return /\s/.test(string);
+}
+
+function toPreviousPage() {
+    if (location.href.endsWith("/")) {
+        location.href = "..";
+    } else {
+        location.href = ".";
+    }
 }
