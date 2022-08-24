@@ -11,7 +11,8 @@ public class DeviceUtils {
 
         if (StringUtils.hasText(userAgent)) {
             userAgent = userAgent.toLowerCase();
-            return userAgent.matches("android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini");
+            String regex = "(android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini)";
+            return RegexUtils.contains(userAgent, regex);
         }
         return false;
     }
