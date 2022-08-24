@@ -3,16 +3,22 @@ package com.bluesky.mainservice.repository.user;
 import com.bluesky.mainservice.repository.user.constant.AccountType;
 import com.bluesky.mainservice.repository.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, Long>, UserRepositoryCustom {
 
-    User findByNickname(String nickname);
+    Optional<User> findByNickname(String nickname);
 
-    User findByUuid(UUID uuid);
+    @Query("select u.id from User u where u.uuid = :uuid")
+    Optional<Long> findIdByUuid(@Param("uuid") UUID uuid);
 
-    User findByEmailAndAccountType(String email, AccountType accountType);
+    Optional<User> findByUuid(UUID uuid);
 
-    User findBySocialLoginIdAndAccountType(String socialLoginId, AccountType accountType);
+    Optional<User> findByEmailAndAccountType(String email, AccountType accountType);
+
+    Optional<User> findBySocialLoginIdAndAccountType(String socialLoginId, AccountType accountType);
 }
