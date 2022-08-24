@@ -1,12 +1,12 @@
 package com.bluesky.mainservice.controller.argument;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class LoginUser {
-    UUID uuid;
+    private final UUID id;
 }
