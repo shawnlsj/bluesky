@@ -1,18 +1,15 @@
-.container-fluid {
-    margin-right: auto;
-    margin-left: auto;
-    max-width: 700px;
-    margin-top: 5%;
+.select-category{
+    max-width: 200px;
 }
 
 .editor-box {
-    border: thin solid #a0a0a0;
+    border: 1px solid #a0a0a0;
     border-radius: 3px;
 }
 
 .editor-toolbar-box {
     height: 50px;
-    border-bottom: thin solid #a0a0a0;
+    border-bottom: 1px solid #a0a0a0;
 }
 
 .editor-toolbar button:hover[aria-pressed="false"] {
@@ -26,47 +23,59 @@
 }
 
 .btn-editor-toolbar-start {
-    border: thin solid gray;
+    border: 1px solid #585858;
     border-right: none;
-    border-radius: 3px 0px 0px 3px;
+    border-radius: 3px 0 0 3px;
 }
 
 .btn-editor-toolbar {
-    border: thin solid gray;
+    border: 1px solid #585858;
     border-right: none;
 }
 
 .btn-editor-toolbar-end {
-    border: thin solid gray;
-    border-radius: 0px 3px 3px 0px;
+    border: 1px solid #585858;
+    border-radius: 0 3px 3px 0;
 }
 
 .editor {
-    padding: 10px;
+    padding: 12px;
     overflow: auto;
     height: 50vh;
-    outline: 0px solid transparent;
+    outline: 0 solid transparent;
 }
 
 .btn-toggle {
-    background-color: white;
+    height: 30px;
+    width: 30px;
+    background-color: #fff;
 }
 
 .btn-toggle[aria-pressed="true"] {
-    background: linear-gradient(#787878, #989898);
+    background-color: #989898;
 }
 
 .btn-fontsize {
-    border: thin solid gray;
+    height: 30px;
+    width: 80px;
+    border: 1px solid #585858;
     border-radius: 3px;
-    background-color: white;
+    background-color: #fff;
 }
 
 .btn-dropdown-fontsize {
     display: none;
-    border: thin solid gray;
-    background-color: white;
+    border: 1px solid #585858;
+    background-color: #fff;
     border-bottom: none;
+}
+
+.btn-dropdown-fontsize-top {
+    border-top: none;
+}
+
+.btn-dropdown-fontsize-bottom {
+    border-bottom: 1px solid #585858;
 }
 
 .dropdown-fontsize-box {
@@ -85,35 +94,19 @@
 }
 
 .dropdown-fontsize-box:hover .btn-dropdown-fontsize:active {
-    background: linear-gradient(#787878, #989898);
+    background-color: #989898;
 }
 
 
 .dropdown-fontsize-box:hover .btn-fontsize {
-    border-radius: 3px 3px 3px 0px;
+    border-radius: 3px 3px 3px 0;
     background-color: #d6d6d6;
 }
 
-.border-top-none {
-    border-top: none;
+.border-bottom-#a0a0a0 {
+    border-bottom: 1px solid #a0a0a0;
 }
 
-.border-bottom-gray {
-    border-bottom: thin solid gray;
-}
-
-.btn-submit {
-    float: right;
-}
-
-[data-overflow-titlesize="true"] {
-    color: red;
-}
-
-[data-overflow-contentsize="true"] {
-    color: red;
-}
-
-[data-overflow-htmlsize="true"] {
-    color: red;
+[data-overflow-length="true"] {
+    color: #dc3545;
 }
