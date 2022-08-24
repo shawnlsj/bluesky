@@ -1,9 +1,11 @@
 package com.bluesky.mainservice.service.user;
 
-import com.bluesky.mainservice.config.security.jwt.JoinTokenInfo;
+import com.bluesky.mainservice.config.security.jwt.JoinTokenParseData;
 import com.bluesky.mainservice.config.security.jwt.JwtGenerator;
-import com.bluesky.mainservice.config.security.jwt.ResetPasswordTokenInfo;
+import com.bluesky.mainservice.config.security.jwt.ResetPasswordTokenParseData;
 import com.bluesky.mainservice.config.security.jwt.TokenType;
+import com.bluesky.mainservice.repository.community.board.BoardRepository;
+import com.bluesky.mainservice.repository.community.board.ReplyRepository;
 import com.bluesky.mainservice.repository.user.RoleRepository;
 import com.bluesky.mainservice.repository.user.UserRepository;
 import com.bluesky.mainservice.repository.user.UserRoleRepository;
@@ -12,10 +14,11 @@ import com.bluesky.mainservice.repository.user.constant.RoleType;
 import com.bluesky.mainservice.repository.user.domain.Role;
 import com.bluesky.mainservice.repository.user.domain.User;
 import com.bluesky.mainservice.repository.user.domain.UserRole;
+import com.bluesky.mainservice.repository.user.dto.UserDto;
+import com.bluesky.mainservice.service.user.dto.JoinInProgressUser;
 import com.bluesky.mainservice.service.user.dto.LoginTokenSet;
-import com.bluesky.mainservice.service.user.dto.JoinInProgressUserInfo;
-import com.bluesky.mainservice.service.user.dto.UserAccountInfo;
-import com.bluesky.mainservice.service.user.dto.UserRegisterData;
+import com.bluesky.mainservice.service.user.dto.NewUser;
+import com.bluesky.mainservice.service.user.dto.UserProfile;
 import com.bluesky.mainservice.service.user.exception.UserAlreadyRegisteredException;
 import com.bluesky.mainservice.service.user.exception.UserNotFoundException;
 import io.jsonwebtoken.JwtException;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.Random;
 import java.util.UUID;
 
 import static com.bluesky.mainservice.repository.user.constant.AccountType.*;
@@ -35,50 +39,56 @@ import static com.bluesky.mainservice.repository.user.constant.AccountType.*;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BoardRepository boardRepository;
+    private final ReplyRepository replyRepository;
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtGenerator jwtGenerator;
     private final LoginService loginService;
 
-    public LoginTokenSet register(UserRegisterData data, String joinToken) {
+    public LoginTokenSet register(NewUser newUser, String joinToken) {
 
         if (!jwtGenerator.isValid(joinToken, TokenType.JOIN)) {
             throw new JwtException("유효하지 않은 토큰입니다.");
         }
 
         //토큰에서 값을 가져옴
-        JoinTokenInfo joinTokenInfo = jwtGenerator.parseJoinToken(joinToken);
-        String userId = joinTokenInfo.getUserId();
-        AccountType accountType = joinTokenInfo.getAccountType();
+        JoinTokenParseData joinTokenParseData = jwtGenerator.parseJoinToken(joinToken);
+        String userId = joinTokenParseData.getUserId();
+        AccountType accountType = joinTokenParseData.getAccountType();
 
         //이메일 로그인 유저인지 확인
         //아니라면 소셜 로그인 유저로 프로세스 진행
         User user;
-        if (data.isOriginalUser()) {
+        if (newUser.isOriginalUser()) {
             //이메일 유저의 토큰이 아닐 경우 예외 발생
             if (accountType != ORIGINAL) {
                 throw new JwtException("이메일 유저가 아닙니다.");
             }
 
             //등록된 유저인지 확인
-            user = userRepository.findByEmailAndAccountType(userId, ORIGINAL);
-            if (user != null) {
-                throw new UserAlreadyRegisteredException("이미 등록된 사용자입니다.");
-            }
+            userRepository
+                    .findByEmailAndAccountType(userId, ORIGINAL)
+                    .ifPresent(registeredUser ->
+                    {throw new UserAlreadyRegisteredException();});
 
             //유저를 DB 에 저장
             user = User.builder()
                     .email(userId)
                     .accountType(accountType)
-                    .nickname(data.getNickname())
-                    .password(passwordEncoder.encode(data.getPassword()))
+                    .nickname(newUser.getNickname())
+                    .password(passwordEncoder.encode(newUser.getPassword()))
                     .build();
             userRepository.save(user);
 
             //중간 테이블에 다대다 연관관계를 저장
             Role role = roleRepository.findByRoleType(RoleType.USER);
-            userRoleRepository.save(new UserRole(user, role));
+            UserRole userRole = new UserRole(user, role);
+            userRoleRepository.save(userRole);
+
+            //영속성 컨텍스트에 있는 엔티티에 권한정보 추가
+            user.getUserRoles().add(userRole);
         } else {
             //소셜 로그인 유저가 아닐 경우 예외 발생
             if ((accountType != GOOGLE) && (accountType != KAKAO) && (accountType != NAVER)) {
@@ -86,65 +96,54 @@ public class UserService {
             }
 
             //유저를 데이터베이스에서 조회
-            user = userRepository.findBySocialLoginIdAndAccountType(userId, accountType);
+            user = userRepository.findBySocialLoginIdAndAccountType(userId, accountType)
+                    .orElseThrow(UserNotFoundException::new);
 
             //닉네임을 가지고 있으면 예외 발생
             if (StringUtils.hasText(user.getNickname())) {
-                throw new UserAlreadyRegisteredException("이미 등록된 사용자입니다.");
+                throw new UserAlreadyRegisteredException();
             }
 
             //닉네임 정보를 업데이트
-            user.updateNickName(data.getNickname());
+            user.updateNickName(newUser.getNickname());
         }
+        //프로필 이미지를 기본 이미지 중 하나로 업데이트
+        String profileImage = (new Random().nextInt(9) + 1) + ".jpg";
+        user.updateProfileImage(profileImage);
+
         //로그인용 토큰을 발급
         return loginService.issueLoginTokenSet(user);
     }
 
     @Transactional(readOnly = true)
-    public JoinInProgressUserInfo createJoinInProgressUserInfo(String joinToken) {
+    public JoinInProgressUser createJoinInProgressUserInfo(String joinToken) {
 
         //토큰이 유효하지 않을 경우 예외 발생
         if (!jwtGenerator.isValid(joinToken, TokenType.JOIN)) {
             throw new JwtException("유효하지 않은 토큰입니다.");
         }
 
-        JoinTokenInfo joinTokenInfo = jwtGenerator.parseJoinToken(joinToken);
-        AccountType accountType = joinTokenInfo.getAccountType();
+        JoinTokenParseData joinTokenParseData = jwtGenerator.parseJoinToken(joinToken);
+        AccountType accountType = joinTokenParseData.getAccountType();
         String email;
         User user;
         if (accountType == ORIGINAL) {
-            email = joinTokenInfo.getUserId();
-            user = userRepository.findByEmailAndAccountType(email, accountType);
+            email = joinTokenParseData.getUserId();
+            user = userRepository.findByEmailAndAccountType(email, accountType)
+                    .orElse(null);
         } else {
             //소셜 로그인 유저인데 조회된 결과가 없으면 예외 발생
-            user = userRepository.findBySocialLoginIdAndAccountType(joinTokenInfo.getUserId(), accountType);
-            if (user == null) {
-                throw new UserNotFoundException("존재하지 않는 사용자입니다.");
-            }
+            user = userRepository.findBySocialLoginIdAndAccountType(joinTokenParseData.getUserId(), accountType)
+                    .orElseThrow(UserNotFoundException::new);
             email = user.getEmail();
         }
 
         //이미 등록된 사용자일 경우 예외 발생
         if ((user != null) && user.isRegisteredUser()) {
-            throw new UserAlreadyRegisteredException("이미 등록된 사용자입니다.");
+            throw new UserAlreadyRegisteredException();
         }
 
-        return new JoinInProgressUserInfo(email, accountType);
-    }
-
-    public UserAccountInfo createUserAccountInfo(UUID userId) {
-        User user = userRepository.findByUuid(userId);
-        if (user == null) {
-            throw new UserNotFoundException("존재하지 않는 사용자입니다.");
-        }
-
-        return UserAccountInfo.builder()
-                .email(user.getEmail())
-                .nickname(user.getNickname())
-                .accountType(user.getAccountType())
-                .registerDate(user.getCreatedDate())
-                .build();
-
+        return new JoinInProgressUser(email, accountType);
     }
 
     public void resetPassword(String resetPasswordToken, String password) {
@@ -154,14 +153,33 @@ public class UserService {
         }
 
         //조회되는 유저가 없으면 예외 발생
-        ResetPasswordTokenInfo resetPasswordTokenInfo = jwtGenerator.parseResetPasswordToken(resetPasswordToken);
-        UUID userId = resetPasswordTokenInfo.getUserId();
-        User user = userRepository.findByUuid(userId);
-        if (user == null) {
-            throw new UserNotFoundException("존재하지 않는 사용자 입니다.");
-        }
+        ResetPasswordTokenParseData resetPasswordTokenParseData = jwtGenerator.parseResetPasswordToken(resetPasswordToken);
+        UUID userId = resetPasswordTokenParseData.getUserId();
+        User user = userRepository.findByUuid(userId)
+                .orElseThrow(UserNotFoundException::new);
 
         //비밀번호 업데이트
         user.updatePassword(passwordEncoder.encode(password));
+    }
+
+    public UserProfile findUserProfile(UUID userId) {
+        Long id = userRepository.findIdByUuid(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        UserDto userDto = userRepository.findUserDto(id)
+                .orElseThrow(UserNotFoundException::new);
+
+        int boardCount = boardRepository.countActiveUserBoard(id);
+        int replyCount = replyRepository.countActiveUserReply(id);
+
+       return UserProfile.builder()
+                .nickname(userDto.getNickname())
+                .email(userDto.getEmail())
+                .profileImage(userDto.getProfileImage())
+                .registerDate(userDto.getCreatedDated())
+                .accountType(userDto.getAccountType())
+                .boardCount(boardCount)
+                .replyCount(replyCount)
+                .build();
     }
 }
