@@ -1,4 +1,4 @@
-package com.bluesky.mainservice.controller.validation;
+package com.bluesky.mainservice.controller.user.validation;
 
 import com.bluesky.mainservice.util.RegexUtils;
 
@@ -11,9 +11,6 @@ public class EmailValidator implements ConstraintValidator<Email, String> {
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (value.matches(RegexUtils.EMAIL_VALIDATION_REGEX) && value.length() <= MAX_EMAIL_LENGTH) {
-            return true;
-        }
-        return false;
+        return value.matches(RegexUtils.EMAIL_VALIDATION_REGEX) && value.length() <= MAX_EMAIL_LENGTH;
     }
 }
