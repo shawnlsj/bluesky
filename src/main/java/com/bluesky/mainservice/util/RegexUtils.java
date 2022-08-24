@@ -1,8 +1,10 @@
 package com.bluesky.mainservice.util;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RegexUtils {
+
     //[로컬파트]
     //^[^@]+@ -> @ 앞에 @을 제외한 문자가 1개 이상 있다.
     //[도메인]
@@ -37,5 +39,11 @@ public class RegexUtils {
     public static boolean isContainSpecialChar(String str) {
         Pattern pattern = Pattern.compile("(?=[!\"#$%&'()*+,\\-./:;<=>?@\\[\\\\\\]^_`{|}~]).+");
         return pattern.matcher(str).find();
+    }
+    
+    public static boolean contains(String str, String regex){
+        Pattern compile = Pattern.compile(regex);
+        Matcher matcher = compile.matcher(str);
+        return matcher.find();
     }
 }
