@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko-KR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragment/fragment_head :: head (~{::title},~{::head-block})}">
+    <meta charset="UTF-8">
+    <title>검색 결과</title>
+    <th:block th:fragment="head-block">
+        <link rel="stylesheet" href="/css/community/board/board_list.css"/>
+        <link rel="stylesheet" href="/css/search_result.css"/>
+    </th:block>
+</head>
+<body>
+<div class="body-wrapper">
+    <div class="header" th:replace="fragment/fragment_header :: header"></div>
+    <div class="pb-5 main-container container-fluid">
+        <div>
+            <span class="fw-bold">검색결과</span>
+            <span th:text="${totalCount}"></span>
+        </div>
+        <div class="pt-1" th:if="${totalCount == 0}">
+            <span class="fs-gt fw-bold" th:text="'\''+${keyword}+'\''"></span>
+            <span class="fs-gt">에 대한 검색 결과가 없습니다.</span>
+        </div>
+        <div class="pt-3 pb-3 border-bottom-gray"
+             th:each="__${boardSearchResultList} != null ? 'board : ${boardSearchResultList}' : 'reply : ${replySearchResultList}'__"
+             th:with="__${replySearchResultList} != null ? 'board = ${boardMap.get(reply.boardId)}' : 'board = ${board}'__">
+            <div class="d-flex flex-wrap">
+                <a class="d-inline-flex text-decoration-none hover-transparent"
+                   th:href="@{/users/{userId}(userId=${board.userId})}">
+                    <img class="board-signature-profile"
+                         th:src="@{/images/user/profile/{profileImage}(profileImage=${board.profileImage})}"
+                         alt="profile">
+                    <span class="ps-1 pe-2 fs-sm text-dark" th:utext="${board.nickname}"></span>
+                </a>
+                <span class="fs-sm text-gray"
+                      th:text="${#temporals.format(board.createdDate,'yyyy-MM-dd hh:mm')}"></span>
+            </div>
+            <a class="mt-1 d-inline-block text-decoration-none text-dark hover-transparent"
+               th:href="@{/{communityType}/board/{directoryId}/{boardId}
+               (communityType=${#strings.toLowerCase(board.communityType)},
+               directoryId=${board.boardDirectoryId},
+               boardId=${board.id})}">
+                <p class="m-0 fw-bold fs-gt" th:utext="${board.title}"></p>
+                <p class="m-0" th:utext="${board.content}"></p>
+            </a>
+            <div class="d-flex pt-1 fs-sm text-gray">
+                <a class="pe-2 text-decoration-none text-gray hover-transparent"
+                   th:href="@{/{communityType}/board/{directoryId}
+                   (communityType=${#strings.toLowerCase(board.communityType)},
+                   directoryId=${board.boardDirectoryId})}">
+                    <th:block th:switch="${board.communityType.name()}">
+                        <span th:case="'PROGRAMMING'">프로그래밍</span>
+                        <span th:case="'ENGLISH'">영어</span>
+                        <span th:case="'TRAVEL'">여행</span>
+                    </th:block>
+                    <i class="bi bi-dot"></i>
+                    <span th:text="${board.boardDirectoryName}"></span>
+                </a>
+            </div>
+            <!--/* 댓글 시작 */-->
+            <div class="d-flex pt-2" th:if="${replySearchResultList} != null">
+                <div>
+                    <i class="reply-symbol bi bi-arrow-return-right"></i>
+                </div>
+                <div class="d-flex ps-2 flex-column flex-wrap">
+                    <div class="d-flex flex-wrap align-items-end">
+                        <a class="d-flex text-decoration-none text-dark hover-transparent" href="#">
+                            <img class="me-1 board-signature-profile"
+                                 th:src="@{/images/user/profile/{profileImage}(profileImage=${reply.profileImage})}"
+                                 alt="profile">
+                            <span class="pe-2 fs-sm" th:text="${reply.nickname}"></span>
+                        </a>
+                        <span class="fs-sm text-gray"
+                              th:text="${#temporals.format(reply.createdDate,'yyyy-MM-dd hh:mm')}">2022-08-14 22:10</span>
+                    </div>
+                    <div class="pt-1">
+                        <a class="text-decoration-none text-dark hover-transparent"
+                           th:href="@{/{communityType}/board/{directoryId}/{boardId}
+                          (communityType=${#strings.toLowerCase(board.communityType)},
+                          directoryId=${board.boardDirectoryId},
+                          boardId=${board.id})}">
+                            <span th:utext="${reply.content}">댓글</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!--/* 댓글 끝 */-->
+        </div>
+        <nav class="mt-4 d-flex justify-content-center" aria-label="게시판 페이지 네비게이션"
+             th:object="${pageNavigation}"
+             th:if="${pageNavigation.totalPagesNum > 1}">
+            <ul class="pagination">
+                <!-- 이전, 처음 버튼-->
+                <th:block th:if="*{startPageNum > 1}">
+                    <li>
+                        <a class="page-button"
+                           th:href="@{${#request.requestURI}(page=1,keyword=${keyword},type=${searchType})}"
+                           aria-label="첫 페이지">
+                            <i class="pe-none bi bi-chevron-double-left" aria-hidden="true"></i>
+                        </a>
+                    </li>
+                    <li class="ms-2">
+                        <a class="page-button"
+                           th:href="@{${#request.requestURI}(page=*{startPageNum - 1},keyword=${keyword},type=${searchType})}"
+                           aria-label="이전 페이지 묶음">
+                            <i class="pe-none bi bi-chevron-left" aria-hidden="true"></i>
+                        </a>
+                    </li>
+                </th:block>
+                <!-- 페이지 버튼 -->
+                <th:block th:each="pageNum : *{#numbers.sequence(startPageNum, endPageNum)}">
+                    <th:block th:if="${pageNum} == *{requestedPageNum}">
+                        <li class="ms-2" aria-current="page">
+                            <a class="page-button-now"
+                               th:href="@{${#request.requestURI}(page=${pageNum},keyword=${keyword},type=${searchType})}"
+                               th:text="${pageNum}">1</a>
+                        </li>
+                    </th:block>
+                    <th:block th:unless="${pageNum} == *{requestedPageNum}">
+                        <li class="ms-2">
+                            <a class="page-button"
+                               th:href="@{${#request.requestURI}(page=${pageNum},keyword=${keyword},type=${searchType})}"
+                               th:text="${pageNum}">2</a>
+                        </li>
+                    </th:block>
+                </th:block>
+
+                <!-- 다음, 끝 버튼-->
+                <th:block th:if="*{totalPagesNum > endPageNum}">
+                    <li class="ms-2">
+                        <a class="page-button"
+                           th:href="@{${#request.requestURI}(page=*{endPageNum + 1},keyword=${keyword},type=${searchType})}"
+                           aria-label="다음 페이지 묶음">
+                            <i class="pe-none bi bi-chevron-right" aria-hidden="true"></i>
+                        </a>
+                    </li>
+                    <li class="ms-2">
+                        <a class="page-button"
+                           th:href="@{${#request.requestURI}(page=*{totalPagesNum},keyword=${keyword},type=${searchType})}"
+                           aria-label="마지막 페이지">
+                            <i class="pe-none bi bi-chevron-double-right" aria-hidden="true"></i>
+                        </a>
+                    </li>
+                </th:block>
+            </ul>
+        </nav>
+    </div>
+    <div class="footer" th:replace="fragment/fragment_footer :: footer"></div>
+</div>
+</body>
+</html>
