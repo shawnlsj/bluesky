@@ -1,16 +1,19 @@
 package com.bluesky.mainservice.config;
 
+import com.bluesky.mainservice.config.converter.StringToCommunityTypeConverter;
+import com.bluesky.mainservice.config.converter.StringToSearchTypeConverter;
 import com.bluesky.mainservice.config.filter.RefererCheckFilter;
 import com.bluesky.mainservice.config.interceptor.ResolveViewModeInterceptor;
 import com.bluesky.mainservice.controller.argument.argumentresolver.LoginUserArgumentResolver;
 import com.bluesky.mainservice.controller.argument.argumentresolver.MobilePageArgumentResolver;
 import com.bluesky.mainservice.config.filter.HttpsValidationFilter;
 import com.bluesky.mainservice.config.filter.XssFilter;
-import com.bluesky.mainservice.config.interceptor.FilteredXssCheckInterceptor;
+import com.bluesky.mainservice.config.interceptor.FilteredXssChecker;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -23,6 +26,12 @@ import java.util.List;
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new StringToCommunityTypeConverter());
+        registry.addConverter(new StringToSearchTypeConverter());
+    }
+
+    @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new LoginUserArgumentResolver());
         resolvers.add(new MobilePageArgumentResolver());
@@ -30,15 +39,15 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new FilteredXssCheckInterceptor())
+        registry.addInterceptor(new FilteredXssChecker())
                 .order(0)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/css/**", "/js/**");
+                .excludePathPatterns("/css/**", "/js/**", "/images/**");
 
         registry.addInterceptor(new ResolveViewModeInterceptor())
                 .order(1)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/css/**", "/js/**");
+                .excludePathPatterns("/css/**", "/js/**", "/images/**");
     }
 
     @Bean
