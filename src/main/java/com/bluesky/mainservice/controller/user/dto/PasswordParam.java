@@ -1,6 +1,6 @@
 package com.bluesky.mainservice.controller.user.dto;
 
-import com.bluesky.mainservice.controller.validation.Password;
+import com.bluesky.mainservice.controller.user.validation.Password;
 import lombok.Getter;
 import lombok.Setter;
 

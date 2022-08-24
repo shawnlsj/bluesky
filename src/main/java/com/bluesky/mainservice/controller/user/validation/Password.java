@@ -1,4 +1,4 @@
-package com.bluesky.mainservice.controller.validation;
+package com.bluesky.mainservice.controller.user.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -8,11 +8,12 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Constraint(validatedBy = NicknameValidator.class)
+@Constraint(validatedBy = PasswordValidator.class)
 @Target(FIELD)
 @Retention(RUNTIME)
-public @interface Nickname {
-    String message() default "닉네임 형식이 올바르지 않음";
+public @interface Password {
+
+    String message() default "비밀번호 형식이 올바르지 않음";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
