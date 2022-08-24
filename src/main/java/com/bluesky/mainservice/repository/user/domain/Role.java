@@ -22,4 +22,8 @@ public class Role extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "role_type")
     private RoleType roleType;
+
+    public Role(Integer id) {
+        this.id = id;
+    }
 }
