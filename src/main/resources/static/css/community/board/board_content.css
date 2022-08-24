@@ -1,0 +1,65 @@
+.board-content-container {
+    min-height: 20vh;
+}
+
+.btn-likes-board{
+    height: 45px;
+    width:45px;
+    border-radius: 50%;
+    border: 2px solid #FFDFDE;
+    background-color: transparent;
+}
+
+.btn-likes-reply {
+    border: 0;
+    background-color: transparent;
+}
+
+[data-overflow-length="true"] {
+    color: #dc3545;
+}
+
+.mark-likes-reply {
+    position: relative;
+    bottom: -1px;
+}
+
+.reply-writer{
+    position: relative;
+    top: -3px;
+    color: #7d7dfc;
+    border: 1px solid #7d7dfc;
+    border-radius: 15px;
+    padding: 0 5px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.board-content-profile{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.reply-profile{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.nested-reply-empty{
+    width: 40px;
+}
+
+.reply-user-link {
+    color: #7d7dfc;
+    text-decoration: none;
+}
+
+.reply-user-link:hover{
+    color: #7d7dfc;
+}
+
+.text-deleted-by{
+    color: #7f7f7f;
+}
