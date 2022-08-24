@@ -5,6 +5,7 @@ import com.bluesky.mainservice.config.security.jwt.JwtAuthenticationProvider;
 import com.bluesky.mainservice.config.security.jwt.JwtGenerator;
 import com.bluesky.mainservice.config.security.oauth2.CustomAuthorizationRequestResolver;
 import com.bluesky.mainservice.config.security.oauth2.NullOAuth2AuthorizedClientService;
+import com.bluesky.mainservice.repository.user.constant.RoleType;
 import com.bluesky.mainservice.service.user.LoginService;
 import com.bluesky.mainservice.service.user.security.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,6 +29,13 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.savedrequest.NullRequestCache;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static com.bluesky.mainservice.repository.user.constant.RoleType.*;
 
 @RequiredArgsConstructor
 @Configuration
@@ -50,9 +59,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
+        List<String> antMatcherList = new ArrayList<>();
+        antMatcherList.add("/css/**");
+        antMatcherList.add("/js/**");
+        antMatcherList.add("/images/**");
+        antMatcherList.add("/join/**");
+        antMatcherList.add("/reset-password/**");
+
         web.ignoring()
-                .antMatchers("/css/**", "/js/**", "/images/**", "/join/**")
-                .mvcMatchers(HttpMethod.GET, "/login");
+                .antMatchers(antMatcherList.toArray(String[]::new))
+                .antMatchers(HttpMethod.GET, "/login")
+                .mvcMatchers("/user/availability");
     }
 
     @Override
@@ -64,17 +81,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.requestCache()
                 .requestCache(new NullRequestCache());
 
-        http.authorizeRequests()
-                .antMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                .antMatchers("/board/create", "/mypage").hasAnyAuthority("USER", "ADMIN")
-                .antMatchers("/m/board/create").hasAnyAuthority("USER")
-                .anyRequest().permitAll()
+        authorizeRequests(http)
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtAuthenticationProvider, jwtGenerator, loginService)
                         , UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling()
                 .authenticationEntryPoint(unauthenticatedRequestHandler)
                 .accessDeniedHandler(accessDeniedHandler);
+
         http.formLogin()
                 .loginPage("/login")
                 .usernameParameter("username")
@@ -106,5 +120,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    private ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry authorizeRequests(HttpSecurity http) throws Exception {
+        return http.authorizeRequests()
+                .mvcMatchers("/{communityType}/board/{directoryId:[0-9]+}/write").hasAnyAuthority(toStringArr(USER, allAdmins()))
+                .mvcMatchers(HttpMethod.POST, "/board").hasAnyAuthority(toStringArr(USER, allAdmins()))
+                .mvcMatchers(HttpMethod.PUT, "/board/{boardId:[0-9]+}").hasAnyAuthority(toStringArr(USER, allAdmins()))
+                .mvcMatchers(HttpMethod.DELETE, "/board/{boardId:[0-9]+}").hasAnyAuthority(toStringArr(USER, allAdmins()))
+                .mvcMatchers(HttpMethod.POST, "/reply").hasAnyAuthority(toStringArr(USER, allAdmins()))
+                .mvcMatchers(HttpMethod.PUT, "/reply/{replyId:[0-9]+}").hasAnyAuthority(toStringArr(USER, allAdmins()))
+                .mvcMatchers(HttpMethod.DELETE, "/reply/{replyId:[0-9]+}").hasAnyAuthority(toStringArr(USER, allAdmins()))
+                .antMatchers("/admin/**").hasAnyAuthority(toStringArr(allAdmins()))
+                .antMatchers("/mypage/**").hasAnyAuthority(toStringArr(USER, allAdmins()))
+                .anyRequest().permitAll();
+    }
+
+    private String[] toStringArr(RoleType... roleTypes) {
+        return Arrays.stream(roleTypes).map(Enum::name).toArray(String[]::new);
+    }
+
+    private String[] toStringArr(RoleType roleType, RoleType[] roleTypeArr) {
+        return Stream.concat(Stream.of(roleType), Arrays.stream(roleTypeArr))
+                .map(Enum::name)
+                .toArray(String[]::new);
     }
 }
