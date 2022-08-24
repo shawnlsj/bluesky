@@ -1,4 +1,3 @@
-import {MAX_NICKNAME_LENGTH, MIN_NICKNAME_LENGTH} from "/js/config/user_option.js";
 class NicknameValidator{
     static nicknameForm = document.getElementById("nickname");
     static nicknameInvalidFeedback = document.getElementById("nicknameInvalidFeedback");
