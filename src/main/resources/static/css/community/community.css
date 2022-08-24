@@ -1,0 +1,12 @@
+[data-directory-now="true"] {
+    background-color: #7d7dfc;
+
+}
+
+[data-directory-now="true"] a{
+    color: #fff;
+}
+
+[data-directory-now="false"] a{
+    color: #2b2b2b;
+}
