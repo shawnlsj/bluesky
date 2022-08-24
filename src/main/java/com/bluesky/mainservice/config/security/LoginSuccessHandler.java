@@ -54,10 +54,12 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             JwtMapper.addRefreshToken(response, loginTokenSet.getRefreshToken());
 
             redirectLocation = CookieUtils.resolveRedirectCookie(request);
+
             //소셜 로그인인 경우 가입 완료된 사용자에 한해서만 액세스 토큰과 리프레시 토큰을 발근한다
         } else if (principal instanceof OAuth2UserDetails) {
             OAuth2UserDetails userInfo = (OAuth2UserDetails) principal;
             User user = userInfo.getUser();
+
             //신규 회원일 경우 추가 정보 입력 창으로 리다이렉트
             if (!user.isRegisteredUser()) {
                 String token = jwtGenerator.generateJoinToken(user.getSocialLoginId(), user.getAccountType());

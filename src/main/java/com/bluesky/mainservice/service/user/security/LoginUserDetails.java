@@ -1,15 +1,16 @@
 package com.bluesky.mainservice.service.user.security;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
 import java.util.UUID;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 public class LoginUserDetails {
-    private UUID userId;
-    private List<GrantedAuthority> authorities;
+    
+    private final UUID userId;
+    private final List<GrantedAuthority> authorities;
 }

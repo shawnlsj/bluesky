@@ -1,31 +1,74 @@
 package com.bluesky.mainservice.controller.user.dto;
 
-import com.bluesky.mainservice.repository.user.constant.AccountType;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
 public class UserResponseDto {
-
-    @Builder
     @Getter
-    public static class UserAccount {
+    public static class UserProfile {
+
+        private final String profileImage;
+        private final String nickname;
+        private final int boardCount;
+        private final int replyCount;
+        private final boolean isMyself;
+
+        @Builder
+        public UserProfile(@NonNull String profileImage,
+                           @NonNull String nickname,
+                           @NonNull Integer boardCount,
+                           @NonNull Integer replyCount,
+                           @NonNull Boolean isMyself) {
+            this.profileImage = profileImage;
+            this.nickname = nickname;
+            this.boardCount = boardCount;
+            this.replyCount = replyCount;
+            this.isMyself = isMyself;
+        }
+    }
+
+    @Getter
+    public static class MyInformation {
+
+        private final String profileImage;
         private final String maskedEmail;
         private final String nickname;
         private final String accountType;
         private final LocalDateTime joinDate;
+        private final int boardCount;
+        private final int replyCount;
+
+        @Builder
+        private MyInformation(@NonNull String profileImage,
+                              @NonNull String maskedEmail,
+                              @NonNull String nickname,
+                              @NonNull String accountType,
+                              @NonNull LocalDateTime joinDate,
+                              @NonNull Integer boardCount,
+                              @NonNull Integer replyCount) {
+            this.profileImage = profileImage;
+            this.maskedEmail = maskedEmail;
+            this.nickname = nickname;
+            this.accountType = accountType;
+            this.joinDate = joinDate;
+            this.boardCount = boardCount;
+            this.replyCount = replyCount;
+        }
     }
 
     @Getter
-    public static class JoinUserInfo {
+    public static class JoinFormAttribute {
+        
         private final String token;
         private final String maskedEmail;
         private final boolean isOriginalUser;
         private final String joinUrl;
 
-        public JoinUserInfo(String token, String maskedEmail, boolean isOriginalUser) {
+        public JoinFormAttribute(String token, String maskedEmail, boolean isOriginalUser) {
             this.token = token;
             this.maskedEmail = maskedEmail;
             this.isOriginalUser = isOriginalUser;
@@ -37,13 +80,13 @@ public class UserResponseDto {
         }
     }
 
-    @AllArgsConstructor
+    @RequiredArgsConstructor
     @Getter
     public static class SendEmailResult {
         private final boolean isSuccess;
     }
 
-    @AllArgsConstructor
+    @RequiredArgsConstructor
     @Getter
     public static class CheckNicknameResult {
         private final boolean isAvailable;

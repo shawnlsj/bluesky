@@ -1,14 +1,15 @@
 package com.bluesky.mainservice.service.user.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * 로그인에 사용할 액세스 토큰과 리프레시 토큰을 포함합니다.
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 public class LoginTokenSet {
-    String accessToken;
-    String refreshToken;
+
+    private final String accessToken;
+    private final String refreshToken;
 }

@@ -1,7 +1,5 @@
 package com.bluesky.mainservice.util;
 
-import org.springframework.util.StringUtils;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,6 +8,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 public class CookieUtils {
+
     private static final String PREFIX_HOST = "__Host-";
     private static final String REDIRECT_COOKIE_NAME = "redirect";
     private static final String MESSAGE_COOKIE_NAME = "message";

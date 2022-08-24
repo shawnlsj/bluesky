@@ -23,6 +23,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
@@ -43,33 +44,27 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String id = attributeMapper.getId();
         AccountType accountType = AccountType.valueOf(registrationId.toUpperCase());
 
-
         //유저 조회
-        User user = userRepository.findBySocialLoginIdAndAccountType(id, accountType);
+        User user = userRepository.findBySocialLoginIdAndAccountType(id, accountType).orElseGet(
+                () -> {
+                    //유저가 조회되지 않았으면 새로운 유저를 저장
+                    User newUser = User.builder()
+                            .socialLoginId(id)
+                            .accountType(accountType)
+                            .email(attributeMapper.getEmail())
+                            .build();
+                    userRepository.save(newUser);
+                    Integer roleId = roleRepository.findIdByRoleType(RoleType.USER);
+                    userRoleRepository.save(new UserRole(newUser, new Role(roleId)));
+                    return newUser;
+                }
+        );
 
-        //DB 에 존재 하지 않는 유저일 경우
-        if (user == null) {
-            user = User.builder()
-                    .socialLoginId(id)
-                    .email(attributeMapper.getEmail())
-                    .accountType(accountType)
-                    .build();
-            userRepository.save(user);
-
-            //중간 테이블에 다대다 연관관계를 저장
-            Role role = roleRepository.findByRoleType(RoleType.USER);
-            userRoleRepository.save(new UserRole(user, role));
-
-        } else {
-            //유저 정보를 새로 가져온 정보로 업데이트
-            updateUser(user, attributeMapper);
-        }
+        //유저 정보를 새로 가져온 정보로 업데이트
+        updateUser(user, attributeMapper);
 
         //인증 정보를 담을 객체를 생성
-        return OAuth2UserDetails.builder()
-                .oAuth2User(oAuth2User)
-                .user(user)
-                .build();
+        return new OAuth2UserDetails(oAuth2User, user);
     }
 
     private void updateUser(User user, AttributeMapper attributeMapper) {
