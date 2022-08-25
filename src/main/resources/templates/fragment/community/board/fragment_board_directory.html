@@ -1,0 +1,21 @@
+<div class="col-lg-2 d-lg-flex d-none" th:fragment="directory"
+     th:object="${boardDirectoryNavigation}">
+    <div class="border-no-bottom flex-grow-1">
+        <div class="mt-3">
+            <div class="fw-bold">
+                <span class="ps-2">게시판 목록</span>
+            </div>
+            <th:block th:each="entrySet : *{idAndNameMap}">
+                <div class="mt-1 pt-1 pb-1"
+                     th:data-directory-now="*{currentId} == ${entrySet.key} ? 'true' : 'false'">
+                    <a class="ps-2 d-inline-block text-decoration-none"
+                       th:text="${entrySet.value}"
+                       th:href="@{/{communityType}/board/{directoryId}
+                       (communityType=${#strings.toLowerCase(communityType)}, directoryId=${entrySet.key})}">
+                        게시판 이름
+                    </a>
+                </div>
+            </th:block>
+        </div>
+    </div>
+</div>
