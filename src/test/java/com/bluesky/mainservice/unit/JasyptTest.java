@@ -11,7 +11,7 @@ class JasyptTest {
 
     @Test
     @DisplayName("암복호화 테스트")
-    void EncryptorTest() {
+    void encryptorTest() {
         //given
         String password = "ABC/123-!@#";
         String msg = "Hello World";
