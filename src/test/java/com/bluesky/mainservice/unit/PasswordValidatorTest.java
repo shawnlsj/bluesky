@@ -1,7 +1,7 @@
 package com.bluesky.mainservice.unit;
 
 import com.bluesky.mainservice.controller.user.constant.UserOption;
-import com.bluesky.mainservice.controller.validation.PasswordValidator;
+import com.bluesky.mainservice.controller.user.validation.PasswordValidator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
