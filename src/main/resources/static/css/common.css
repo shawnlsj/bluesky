@@ -8,6 +8,18 @@ button {
     padding: 1px 6px;
 }
 
+font[size="3"] {
+    font-size: 1rem;
+}
+
+font[size="4"] {
+    font-size: 1.5rem;
+}
+
+font[size="5"] {
+    font-size: 2rem;
+}
+
 .container-fluid {
     max-width: 1250px;
     padding-left: 16px;
