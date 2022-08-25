@@ -123,8 +123,8 @@ public class UserController {
 
     //로그인 실패 시 포워딩 여기로 포워딩 됨
     @PostMapping("/login")
-    public String failedLoginForm(@RequestParam String email, Model model) {
-        model.addAttribute("email", email);
+    public String failedLoginForm(@RequestParam String username, Model model) {
+        model.addAttribute("email", username);
         return "user/login_form";
     }
 
