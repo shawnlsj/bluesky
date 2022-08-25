@@ -76,27 +76,6 @@ import {showFailModal} from "/js/util/modal.js";
         element.focus();
     }
 
-    //폰트사이즈 버튼 위의 글씨를 실제 적용될 글자 크기로 키워 놓는다
-    function initFontSize() {
-        Array.from(document.getElementsByClassName("btn-dropdown-fontsize")).forEach((button) => {
-            selection = document.getSelection();
-            range = document.createRange();
-
-            range.selectNodeContents(button);
-
-            selection.removeAllRanges();
-            selection.addRange(range);
-
-            //display:none 으로 설정한 버튼의 속성을 none 이외의 값으로 바꿨다가 없앤다
-            //-> 버튼이 visible 하게 바뀐 사이 버튼의 폰트 사이즈를 바꾸기 위해
-            button.style.display = "block";
-            button.setAttribute("contenteditable", "true");
-            document.execCommand("fontSize", false, button.getAttribute("data-fontsize"));
-            button.removeAttribute("contenteditable");
-            button.removeAttribute("style");
-        });
-    }
-
     function initEventListeners() {
         addEventListenersToEditor();
         addEventListenersToToggleBtn();
@@ -297,7 +276,6 @@ import {showFailModal} from "/js/util/modal.js";
             .replaceAll(/([\n\r])/g, "<br>")
     }
 
-    initFontSize();
     initEventListeners();
     document.getElementById("maxTitleLength").textContent = MAX_TITLE_LENGTH;
     document.getElementById("maxContentLength").textContent = MAX_CONTENT_LENGTH;
