@@ -14,9 +14,7 @@ spring:
       on-profile: prod
 
   datasource:
-    url: jdbc:mysql://localhost:3306/bluesky
-    username: root
-    password: 1234
+    url: ENC(bTvgL/lALVRNfl6ZVc2k49ZEtTyE/3L3SrMllpENQe+mCDm2AJwHRvssnsYJU+4rb9UAAr2H7Cgjn+p2Iw46a32az87hTfVYrhH45w9+F27IN3O+yMEDKoQnG7FJSqIIXVtLNs/ZPPZhbztA5R5lNQ==)
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -57,12 +55,6 @@ decorator:
       enable-logging: false
 
 server:
-  ssl:
-    key-store: local_keystore
-    key-store-type: PKCS12
-    key-store-password: 123456
-    key-alias: localkey
-  port: 443
   servlet:
     session:
       cookie:
