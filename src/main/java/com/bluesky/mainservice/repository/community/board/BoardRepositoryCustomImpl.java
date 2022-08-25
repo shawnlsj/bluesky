@@ -35,7 +35,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
         Pageable pageable = searchCondition.getPageable();
 
         List<BoardTitleNoUserDto> content =
-                queryFactory.select(new QBoardNoContentAndUserDto(
+                queryFactory.select(new QBoardTitleNoUserDto(
                                 board.id,
                                 community.communityType,
                                 boardDirectory.id,
@@ -82,7 +82,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
         Pageable pageable = searchCondition.getPageable();
 
         List<BoardTitleDto> content =
-                queryFactory.select(new QBoardNoContentDto(
+                queryFactory.select(new QBoardTitleDto(
                                 board.id,
                                 categoryId(searchCondition.getCategoryId()),
                                 boardCategory.name,
@@ -257,33 +257,4 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
     private OrderSpecifier<Integer> replyCountDesc(Boolean orderCond) {
         return orderCond == null ? null : board.replyCount.desc();
     }
-
-//    @Override
-//    public Page<BoardDto> findDtoPage(Pageable pageable) {
-//        List<BoardDto> content = queryFactory.select(new QBoardDto(board.id, board.title, board.content, board.createdDate))
-//                .from(board)
-//                .orderBy(board.id.desc())
-//                .offset(pageable.getOffset())
-//                .limit(pageable.getPageSize())
-//                .fetch();
-//        JPAQuery<Long> countQuery = queryFactory.select(board.count())
-//                .from(board);
-//        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
-//    }
-//
-//    @Override
-//    public List<BoardDto> findDtoList(long cursor, int size) {
-//        List<BoardDto> content = queryFactory.select(new QBoardDto(board.id, board.title, board.content, board.createdDate))
-//                .from(board)
-//                .where(board.id.lt(cursor))
-//                .orderBy(board.id.desc())
-//                .limit(size)
-//                .fetch();
-//        return content;
-//    }
-//
-//    @Override
-//    public Long findLastId() {
-//        return queryFactory.select(board.id.max()).from(board).fetchOne();
-//    }
 }
