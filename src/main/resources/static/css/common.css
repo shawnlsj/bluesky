@@ -4,6 +4,10 @@ hr {
     border: 1px solid #e0e0e0;
 }
 
+button {
+    padding: 1px 6px;
+}
+
 .container-fluid {
     max-width: 1250px;
     padding-left: 16px;
@@ -348,7 +352,7 @@ mark {
     margin: 0 -16px;
 }
 
-.sticky-aside{
+.sticky-aside {
     position: sticky;
     top: 10%;
 }
