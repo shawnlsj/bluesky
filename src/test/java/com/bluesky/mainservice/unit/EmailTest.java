@@ -1,7 +1,7 @@
 package com.bluesky.mainservice.unit;
 
 import com.bluesky.mainservice.controller.user.constant.UserOption;
-import com.bluesky.mainservice.controller.validation.EmailValidator;
+import com.bluesky.mainservice.controller.user.validation.EmailValidator;
 import com.bluesky.mainservice.util.RegexUtils;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -104,9 +104,7 @@ public class EmailTest {
             //given
             StringBuilder sb = new StringBuilder();
             sb.append("this_is_over_length_email_");
-            for (int i = 0; i < UserOption.MAX_EMAIL_LENGTH; i++) {
-                sb.append("A");
-            }
+            sb.append("A".repeat(UserOption.MAX_EMAIL_LENGTH));
             sb.append("@sky.co.kr");
             String email = sb.toString();
 
