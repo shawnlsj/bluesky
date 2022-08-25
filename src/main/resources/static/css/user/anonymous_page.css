@@ -15,7 +15,7 @@
 }
 
 .layout-btn-kakao {
-    background: #fee500;
+    background-color: #fee500;
     color: #000;
 }
 
@@ -26,7 +26,7 @@
 
 .layout-btn-naver {
     font-weight: 400;
-    background: #03c75a;
+    background-color: #03c75a;
     color: #fff;
 }
 
@@ -48,11 +48,10 @@
     height: 3.0rem;
 }
 
-.btn-join{
+.btn-join {
     height: 3.0rem;
 }
 
 input {
     height: 3.0rem;
 }
-
