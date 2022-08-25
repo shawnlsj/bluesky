@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko-KR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragment/fragment_head :: head (~{::title},~{::head-block})}">
+    <meta charset="UTF-8">
+    <title>bluesky 회원 가입 - 이메일 확인</title>
+    <th:block th:fragment="head-block">
+        <link rel="stylesheet" href="/css/user/anonymous_page.css"/>
+        <script type="module" src="/js/user/join_verification.js" defer></script>
+    </th:block>
+</head>
+<body>
+<div th:replace="fragment/modal/fragment_success_modal :: successModal (title='인증메일 발신 완료',message='수신한 이메일을 통하여 가입을 진행해주세요.')"></div>
+<div th:replace="fragment/modal/fragment_fail_modal :: failModal (title='인증메일 발신 실패',message='이메일 형식이 올바르지 않습니다.')"></div>
+<div class="container-fluid">
+    <div class="text-center">
+        <a th:href="@{/}">
+            <img class="img-logo" src="/images/logo.png" alt="bluesky">
+        </a>
+    </div>
+    <div class="mt-5 text-center">
+        <h1 class="fs-4 fw-bold">회원가입</h1>
+    </div>
+    <div class="mt-5">
+        <form id="verificationForm" method="post" novalidate>
+            <div>
+                <label for="email" class="form-label">이메일</label>
+                <input id="email" class="form-control form-email" type="email">
+                <div class="invalid-feedback">
+                    이메일 형식이 올바르지 않습니다.
+                </div>
+                <input id="hiddenEmail" name="email" type="hidden">
+            </div>
+            <div class="d-grid mt-4">
+                <p>아래 버튼을 눌러 이메일 인증을 진행하여 주세요.</p>
+                <button id="sendButton" class="btn btn-primary toggle-block" data-display="true" type="submit">
+                    인증메일 보내기
+                </button>
+                <button id="sendButtonSpinner" class="btn btn-primary toggle-block" data-display="false" type="button"
+                        disabled>
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span class="visually-hidden">로딩중...</span>
+                </button>
+            </div>
+            <div class="mt-2 mb-0 message-resend toggle-flex justify-content-end" data-display="false">
+                <span>메일을 받지 못하셨나요?</span>
+                <a id="resendButton" class="ps-2 link-dark toggle-inline" href="#" data-display="true">인증메일 재발송</a>
+                <div id="resendSpinner" class="toggle-inline-block text-center" data-display="false">
+                    <div class="spinner-border text-dark spinner-border-sm" role="status">
+                        <span class="visually-hidden">로딩 중...</span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="mt-4 pt-3 border-top-gray">
+        <p class="fw-bold">간편 회원가입</p>
+        <a class="text-decoration-none" href="/oauth2/authorization/google">
+            <div class="layout-btn layout-btn-google d-flex">
+                <div class="d-flex justify-content-center align-items-center">
+                    <img class="item-icon" src="/images/logo-google.png" alt="google">
+                </div>
+                <div class="item-text flex-grow-1 text-center">
+                    구글 간편가입
+                </div>
+            </div>
+        </a>
+        <a class="text-decoration-none d-block mt-2" href="/oauth2/authorization/kakao">
+            <div class="layout-btn layout-btn-kakao d-flex">
+                <div class="d-flex justify-content-center align-items-center">
+                    <img class="item-icon" src="/images/logo-kakao.png" alt="kakao">
+                </div>
+                <div class="item-text flex-grow-1 text-center">
+                    카카오 간편가입
+                </div>
+            </div>
+        </a>
+        <a class="text-decoration-none d-block mt-2" href="/oauth2/authorization/naver">
+            <div class="layout-btn layout-btn-naver d-flex">
+                <div class="d-flex justify-content-center align-items-center">
+                    <img class="item-icon" src="/images/logo-naver.png" alt="naver">
+                </div>
+                <div class="item-text flex-grow-1 text-center">
+                    네이버 간편가입
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+<script th:inline="javascript">
+    const MAX_EMAIL_LENGTH
+        = [[${T(com.bluesky.mainservice.controller.user.constant.UserOption).MAX_EMAIL_LENGTH}]];
+</script>
+</body>
+</html>

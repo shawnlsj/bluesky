@@ -1,0 +1,24 @@
+<div id="confirmModal" class="modal" th:fragment="confirmModal (title, message)">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="fw-bold modal-title">
+                    <i class="me-2 bi bi-exclamation-triangle"></i><span id="confirmModalTitle"
+                                                                         th:text="${title}">모달 제목</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+            </div>
+            <div class="modal-body mt-1 mb-1">
+                <span id="confirmModalBody" th:text="${message}">모달 본문</span>
+            </div>
+            <div class="modal-footer">
+                <button id="confirmModalCancelButton" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                <button id="confirmModalConfirmButton" class="btn btn-primary" data-bs-dismiss="modal">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 샘플 코드
+<div th:replace="fragment/modal/fragment_conFirm_modal :: confirmModal (title='댓글 삭제 확인',message=${message})"></div>
+-->

@@ -1,0 +1,27 @@
+.side-menu-container {
+    border-top: 1px solid #bdbdbd;
+    border-left: 1px solid #bdbdbd;
+    border-right: 1px solid #bdbdbd;
+}
+
+[data-menu-now="true"] {
+    background-color: #277dee;
+}
+
+[data-menu-now="true"] a {
+    color: #fff;
+}
+
+[data-menu-now="false"] a {
+    color: #2b2b2b;
+}
+
+.mypage-subject {
+    display: inline-block;
+    width: 100px;
+}
+
+.mypage-content{
+    word-break: break-all;
+    width: 160px;
+}

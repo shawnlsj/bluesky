@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ko-KR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragment/fragment_head :: head (~{::title},~{::head-block})}">
+    <meta charset="UTF-8">
+    <title>bluesky - 게시판</title>
+    <th:block th:fragment="head-block">
+        <link rel="stylesheet" href="/css/community/community.css">
+        <link rel="stylesheet" href="/css/community/board/board_list.css"/>
+    </th:block>
+</head>
+<body>
+<div class="body-wrapper">
+    <div class="header" th:replace="fragment/fragment_header :: header"></div>
+    <div class="main-container container-fluid d-flex">
+        <div class="row flex-grow-1">
+            <div th:replace="fragment/community/board/fragment_board_directory :: directory"></div>
+            <div class="col-12 col-lg-8 pb-lg-5 pb-3 mb-3 d-flex flex-column">
+                <div th:replace="fragment/community/fragment_community_title :: title"></div>
+                <div class="row">
+                    <div class="col-7 col-md-5">
+                        <div class="accordion" id="categoryAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingOne">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#collapseOne" aria-expanded="false"
+                                            aria-controls="collapseOne">
+                                        카테고리
+                                    </button>
+                                </h2>
+                                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                                     data-bs-parent="#categoryAccordion">
+                                    <div class="accordion-body">
+                                        <div>
+                                            <ul class="d-inline-block list-unstyled">
+                                                <li class="d-inline-block mb-2"
+                                                    th:each="category : ${boardCategoryList}">
+                                                    <a class="me-2 category-mark text-decoration-none"
+                                                       th:text="'#'+${category.name}"
+                                                       th:href="@{${#request.requestURI}(categoryId=${category.id})}"></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col d-flex justify-content-end">
+                        <div>
+                            <a class="btn btn-primary pt-2 pb-2"
+                               th:attrappend="href=${#request.getRequestURI().endsWith('/')} ?
+                               @{{requestUrl}write(requestUrl=${#request.getRequestURI()})} :
+                               @{{requestUrl}/write(requestUrl=${#request.getRequestURI()})}">
+                                <i class="bi bi-pencil-square"></i><span class="ps-2">글쓰기</span></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4" th:each="category : ${boardCategoryList}"
+                     th:if="${#request.getParameter('categoryId') == #strings.toString(category.id)}">
+                    <div class="category-wrapper">
+                        <a class="category-mark position-relative" th:href="@{${#request.requestURI}}">
+                            <th:block th:text="'#'+${category.name}"></th:block>
+                            <span class="badge-close">
+                                <span class="badge-text-wrapper"><i class="bi bi-x"></i></span>
+                            </span>
+                            <span class="visually-hidden">카테고리 선택 해제</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="mt-3 board-list-container flex-grow-1 border-top-gray">
+                    <p th:if="${pageNavigation.totalPagesNum == 0}" class="pt-2 fw-bold">
+                        <th:block th:if="${searchType == null}">
+                            작성된 글이 없습니다.
+                        </th:block>
+                        <th:block th:if="${searchType != null}">
+                            검색 결과가 없습니다.
+                        </th:block>
+                    </p>
+                    <th:block th:each="__${boardOutsideViewList} != null ?
+                                       'board : ${boardOutsideViewList}' : 'reply : ${replySearchResultList}'__"
+                              th:with="__${replySearchResultList} != null ? 'board = ${boardMap.get(reply.boardId)}' : 'board = ${board}'__">
+                        <div class="pt-3 pb-3 border-bottom-gray ">
+                            <div class="d-flex">
+                                <!-- 공통 -->
+                                <div class="flex-grow-1 pe-3">
+                                    <div class="category-wrapper">
+                                        <a class="me-2 category-mark" th:text="'#'+${board.categoryName}"
+                                           th:href="@{${#request.requestURI}(categoryId=${board.categoryId})}"></a>
+                                    </div>
+                                    <div>
+                                        <h3 class="d-inline fs-6 hover-transparent">
+                                            <a class="text-decoration-none text-dark"
+                                               th:href="${#request.getRequestURI().endsWith('/')} ?
+                                            @{${#request.getRequestURI() + board.id}} :
+                                            @{${#request.getRequestURI() + '/' + board.id}}">
+                                                <span class="text-pre-wrap" th:utext="${board.title}"></span>
+                                                <span class="count-reply"
+                                                      th:text="'['+${board.replyCount}+']'">[1]</span>
+                                            </a>
+                                        </h3>
+                                    </div>
+                                </div>
+                                <!--데스크탑 화면 -->
+                                <div class="d-lg-flex d-none align-items-center">
+                                    <div class="list-likes-wrapper">
+                                        <i class="bi bi-heart-fill heart-gray" aria-hidden="true"
+                                           aria-label="좋아요 수"></i>
+                                        <span class="ps-1" th:text="${board.likesCount}">9999</span>
+                                    </div>
+                                    <div class="list-view-wrapper">
+                                        <i class="bi bi-eye-fill" aria-hidden="true" aria-label="조회 수"></i>
+                                        <span class="ps-1" th:text="${board.viewCount}">9999</span>
+                                    </div>
+                                    <div class="list-user-wrapper">
+                                        <div class="d-flex align-items-center">
+                                            <a th:href="@{/users/{userId}(userId=${board.userId})}">
+                                                <img class="d-block board-signature-profile"
+                                                     th:src="@{/images/user/profile/{profileImage}(profileImage=${board.profileImage})}"
+                                                     alt="profile">
+                                            </a>
+                                            <div class="ps-1 text-truncate">
+                                                <a class="text-dark text-decoration-none fs-sm"
+                                                   th:href="@{/users/{userId}(userId=${board.userId})}">
+                                                    <span th:utext="${board.nickname}">작성자명</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="pt-1 fs-sm2">
+                                    <span class="text-gray"
+                                          th:text="${#temporals.format(board.createdDate,'yyyy-MM-dd hh:mm')}">2022-10-15 11:</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 모바일 화면 -->
+                            <div class="pt-1 d-lg-none">
+                                <div>
+                                    <div class="d-flex">
+                                        <div class="fs-sm">
+                                            <i class="bi bi-heart-fill heart-gray" aria-hidden="true"
+                                               aria-label="좋아요 수"></i>
+                                            <span class="ms-1 d-inline-block" th:text="${board.likesCount}"
+                                                  style="min-width: 18px">9999</span>
+                                        </div>
+                                        <div class="ms-2 fs-sm">
+                                            <i class="bi bi-eye-fill" aria-hidden="true" aria-label="조회 수"></i>
+                                            <span class="ms-1" th:text="${board.viewCount}">9999</span>
+                                        </div>
+                                    </div>
+                                    <div class="pt-1">
+                                        <div class="d-flex flex-wrap">
+                                            <div class="d-flex align-items-center">
+                                                <a th:href="@{/users/{userId}(userId=${board.userId})}">
+                                                    <img class="d-block board-signature-profile"
+                                                         th:src="@{/images/user/profile/{profileImage}(profileImage=${board.profileImage})}"
+                                                         alt="profile">
+                                                </a>
+                                                <a class="text-dark text-decoration-none fs-sm"
+                                                   th:href="@{/users/{userId}(userId=${board.userId})}">
+                                            <span class="ps-1 pe-1 fs-sm"
+                                                  th:utext="${board.nickname}">작성자명</span>
+                                                </a>
+                                            </div>
+                                            <div class="d-flex align-items-end">
+                                            <span class="fs-sm2 text-gray"
+                                                  th:text="${#temporals.format(board.createdDate,'yyyy-MM-dd hh:mm')}">2022-10-15 11:15</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--/* 댓글 시작 */-->
+                            <div class="d-flex pt-2" th:if="${replySearchResultList} != null">
+                                <div>
+                                    <i class="reply-symbol bi bi-arrow-return-right"></i>
+                                </div>
+                                <div class="d-flex ps-2 flex-column flex-wrap">
+                                    <div class="d-flex flex-wrap align-items-end">
+                                        <a class="d-flex text-decoration-none text-dark hover-transparent" href="#">
+                                            <img class="me-1 board-signature-profile"
+                                                 th:src="@{/images/user/profile/{profileImage}(profileImage=${reply.profileImage})}"
+                                                 alt="profile">
+                                            <span class="pe-2 fs-sm" th:text="${reply.nickname}"></span>
+                                        </a>
+                                        <span class="fs-sm2 text-gray"
+                                              th:text="${#temporals.format(reply.createdDate,'yyyy-MM-dd hh:mm')}">2022-08-14 22:10</span>
+                                    </div>
+                                    <div class="pt-1">
+                                        <a class="text-decoration-none text-dark hover-transparent"
+                                           th:href="${#request.getRequestURI().endsWith('/')} ?
+                                            @{${#request.getRequestURI() + board.id}} :
+                                            @{${#request.getRequestURI() + '/' + board.id}}"
+                                        <span th:utext="${reply.content}">댓글</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--/* 댓글 끝 */-->
+                        </div>
+                    </th:block>
+                </div>
+                <nav class="mt-4 d-flex justify-content-center" aria-label="게시판 페이지 네비게이션"
+                     th:object="${pageNavigation}">
+                    <ul class="pagination flex-wrap">
+                        <!-- 이전, 처음 버튼-->
+                        <th:block th:if="*{startPageNum > 1}">
+                            <li>
+                                <a class="page-button"
+                                   th:href="@{${#request.requestURI}
+                                       (page=1
+                                       __${categoryId} == null ? '':',categoryId=${categoryId}'__
+                                       __${keyword} == null ? '':',keyword=${keyword}'__
+                                       __${searchType} == null ? '':',type=${searchType}'__)}"
+                                   aria-label="첫 페이지">
+                                    <i class="pe-none bi bi-chevron-double-left" aria-hidden="true"></i>
+                                </a>
+                            </li>
+                            <li class="ms-2">
+                                <a class="page-button"
+                                   th:href="@{${#request.requestURI}
+                                       (page=*{startPageNum - 1}
+                                       __${categoryId} == null ? '':',categoryId=${categoryId}'__
+                                       __${keyword} == null ? '':',keyword=${keyword}'__
+                                       __${searchType} == null ? '':',type=${searchType}'__)}"
+                                   aria-label="이전 페이지 묶음">
+                                    <i class="pe-none bi bi-chevron-left" aria-hidden="true"></i>
+                                </a>
+                            </li>
+                        </th:block>
+                        <!-- 페이지 버튼 -->
+                        <th:block th:each="pageNum : *{#numbers.sequence(startPageNum, endPageNum)}">
+                            <th:block th:if="${pageNum} == *{requestedPageNum}">
+                                <li class="ms-2" aria-current="page">
+                                    <a class="page-button-now"
+                                       th:href="@{${#request.requestURI}
+                                       (page=${pageNum}
+                                       __${categoryId} == null ? '':',categoryId=${categoryId}'__
+                                       __${keyword} == null ? '':',keyword=${keyword}'__
+                                       __${searchType} == null ? '':',type=${searchType}'__)}"
+                                       th:text="${pageNum}">1</a>
+                                </li>
+                            </th:block>
+                            <th:block th:if="${pageNum} != *{requestedPageNum}">
+                                <li class="ms-2">
+                                    <a class="page-button"
+                                       th:href="@{${#request.requestURI}
+                                       (page=${pageNum}
+                                       __${categoryId} == null ? '':',categoryId=${categoryId}'__
+                                       __${keyword} == null ? '':',keyword=${keyword}'__
+                                       __${searchType} == null ? '':',type=${searchType}'__)}"
+                                       th:text="${pageNum}">2</a>
+                                </li>
+                            </th:block>
+                        </th:block>
+                        <!-- 다음, 끝 버튼-->
+                        <th:block th:if="*{totalPagesNum > endPageNum}">
+                            <li class="ms-2">
+                                <a class="page-button"
+                                   th:href="@{${#request.requestURI}
+                                       (page=*{endPageNum + 1}
+                                       __${categoryId} == null ? '':',categoryId=${categoryId}'__
+                                       __${keyword} == null ? '':',keyword=${keyword}'__
+                                       __${searchType} == null ? '':',type=${searchType}'__)}"
+                                   aria-label="다음 페이지 묶음">
+                                    <i class="pe-none bi bi-chevron-right" aria-hidden="true"></i>
+                                </a>
+                            </li>
+                            <li class="ms-2">
+                                <a class="page-button"
+                                   th:href="@{${#request.requestURI}
+                                       (page=*{totalPagesNum}
+                                       __${categoryId} == null ? '':',categoryId=${categoryId}'__
+                                       __${keyword} == null ? '':',keyword=${keyword}'__
+                                       __${searchType} == null ? '':',type=${searchType}'__)}"
+                                   aria-label="마지막 페이지">
+                                    <i class="pe-none bi bi-chevron-double-right" aria-hidden="true"></i>
+                                </a>
+                            </li>
+                        </th:block>
+                    </ul>
+                </nav>
+                <div class="d-flex justify-content-center">
+                    <div class="search-bar board-list-search-bar ms-0 mt-3">
+                        <form class="d-flex" method="get" th:action="${#request.getRequestURI()}"
+                              th:data-element-name="searchForm">
+                            <div class="dropdown d-grid pe-2">
+                                <button class="p-0 btn-text dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="d-inline-block text-start"
+                                          th:data-element-name="currentSearchType">
+                                        <th:block th:switch="${searchType}">
+                                            <th:block th:case="null">제목 + 내용</th:block>
+                                            <th:block th:case="'title_content'">제목 + 내용</th:block>
+                                            <th:block th:case="'title'">제목</th:block>
+                                            <th:block th:case="'writer'">글 작성자</th:block>
+                                            <th:block th:case="'reply'">댓글</th:block>
+                                        </th:block>
+                                    </span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <li>
+                                        <button type="button" class="dropdown-item"
+                                                th:data-element-name="searchTypeButton"
+                                                th:data-search-type="title_content">제목 + 내용
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="dropdown-item"
+                                                th:data-element-name="searchTypeButton"
+                                                th:data-search-type="title">제목
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="dropdown-item"
+                                                th:data-element-name="searchTypeButton"
+                                                th:data-search-type="writer">글 작성자
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="dropdown-item"
+                                                th:data-element-name="searchTypeButton"
+                                                th:data-search-type="reply">댓글
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                            <input type="text" class="flex-grow-1 input-search" name="keyword"
+                                   th:value="${keyword}">
+                            <input type="hidden" name="type"
+                                   th:value="${searchType == null} ? title_content : ${#strings.toLowerCase(searchType)}"
+                                   th:data-element-name="searchTypeField">
+                            <input type="hidden" name="categoryId" th:if="${categoryId != null}"
+                                   th:value="${categoryId}">
+                            <button type="submit" class="btn-search"><i class="bi bi-search"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div th:replace="fragment/community/board/fragment_board_ranking :: boardRanking"></div>
+        </div>
+    </div>
+    <div class="footer" th:replace="fragment/fragment_footer :: footer"></div>
+</div>
+</body>
+</html>

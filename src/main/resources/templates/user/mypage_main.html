@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko-KR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragment/fragment_head :: head (~{::title},~{::head-block})}">
+    <meta charset="UTF-8">
+    <title>bluesky - 마이페이지</title>
+    <th:block th:fragment="head-block">
+        <link rel="stylesheet" href="/css/user/profile.css"/>
+        <link rel="stylesheet" href="/css/user/mypage.css"/>
+    </th:block>
+</head>
+<body>
+<div class="body-wrapper">
+    <div class="header" th:replace="fragment/fragment_header :: header"></div>
+    <div class="main-container container-fluid d-md-flex">
+        <div class="flex-grow-1">
+            <div class="mt-4 mb-4">
+                <div class="text-center">
+                    <h1 class="fs-3-fixed">내 정보</h1>
+                </div>
+                <div class="mt-5 d-flex flex-column align-items-center">
+                    <div>
+                        <img class="user-profile-image"
+                             th:src="@{/images/user/profile/{profileImage}(profileImage=${myInformation.profileImage})}"
+                             alt="profile">
+                    </div>
+                    <div class="d-flex flex-column">
+                        <div class="mt-4 d-flex">
+                            <div class="mypage-subject">
+                                <span class="fw-bold">닉네임</span>
+                            </div>
+                            <div class="mypage-content">
+                                <span th:text="${myInformation.nickname}"></span>
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex">
+                            <div class="mypage-subject">
+                                <span class="fw-bold">이메일</span>
+                            </div>
+                            <div class="mypage-content">
+                                <span th:text="${myInformation.maskedEmail}"></span>
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex">
+                            <div class="mypage-subject">
+                                <span class="fw-bold">계정 타입</span>
+                            </div>
+                            <div class="mypage-content">
+                                <span th:text="${myInformation.accountType}"></span>
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex">
+                            <div class="mypage-subject">
+                                <span class="fw-bold">가입일</span>
+                            </div>
+                            <div class="mypage-content">
+                                <span th:text="${#temporals.format(myInformation.getJoinDate(),'yyyy-MM-dd')}"></span>
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex">
+                            <div class="mypage-subject">
+                                <span class="fw-bold">게시글</span>
+                            </div>
+                            <div class="mypage-content">
+                                <span th:text="${myInformation.boardCount}"></span>
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex">
+                            <div class="mypage-subject">
+                                <span class="fw-bold">댓글</span>
+                            </div>
+                            <div class="mypage-content">
+                                <span th:text="${myInformation.replyCount}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer" th:replace="fragment/fragment_footer :: footer"></div>
+</div>
+</body>
+</html>

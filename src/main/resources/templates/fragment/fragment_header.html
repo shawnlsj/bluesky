@@ -1,0 +1,236 @@
+<header class="header mb-3 pb-3" th:fragment="header">
+    <div class="container-fluid">
+        <!-- 데스크탑 화면 -->
+        <nav class="navbar navbar-expand-lg d-none d-lg-flex navbar-light">
+            <a class="navbar-brand" th:href="@{/}">
+                <img class="img-logo" src="/images/logo.png" alt="bluesky">
+            </a>
+            <ul class="navbar-nav ms-lg-4">
+                <li class="nav-item">
+                    <a class="nav-link active" th:href="@{/programming}">프로그래밍</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" th:href="@{/english}">영어</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" th:href="@{/travel}">여행</a>
+                </li>
+            </ul>
+            <div class="search-bar">
+                <form class="d-flex" method="get" action="/search"
+                      th:data-element-name="searchForm">
+                    <div class="dropdown d-grid pe-2">
+                        <button class="p-0 btn-text dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="d-inline-block text-start"
+                              th:data-element-name="currentSearchType">
+                            <th:block th:switch="${searchType}">
+                                <th:block th:case="null">제목 + 내용</th:block>
+                                <th:block th:case="'title_content'">제목 + 내용</th:block>
+                                <th:block th:case="'title'">제목</th:block>
+                                <th:block th:case="'writer'">글 작성자</th:block>
+                                <th:block th:case="'reply'">댓글</th:block>
+                            </th:block>
+                        </span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <li>
+                                <button type="button" class="dropdown-item"
+                                        th:data-element-name="searchTypeButton"
+                                        th:data-search-type="title_content">제목 + 내용
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item"
+                                        th:data-element-name="searchTypeButton"
+                                        th:data-search-type="title">제목
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item"
+                                        th:data-element-name="searchTypeButton"
+                                        th:data-search-type="writer">글 작성자
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item"
+                                        th:data-element-name="searchTypeButton"
+                                        th:data-search-type="reply">댓글
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    <input type="text" class="input-search input-search-static" name="keyword"
+                           th:value="${keyword}">
+                    <input type="hidden" name="type"
+                           th:value="${searchType == null} ? title_content : ${#strings.toLowerCase(searchType)}"
+                           th:data-element-name="searchTypeField">
+                    <button type="submit" class="btn-search"><i class="bi bi-search"></i></button>
+                </form>
+            </div>
+            <ul class="navbar-nav ms-lg-auto">
+                <th:block th:if="${loginInfo.isLoginUser}">
+                    <li class="nav-item">
+                        <a class="nav-link active"
+                           th:href="@{/mypage}">마이페이지</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/logout}">로그아웃</a>
+                    </li>
+                </th:block>
+                <th:block th:unless="${loginInfo.isLoginUser}">
+                    <li class="nav-item">
+                        <a class="nav-link active"
+                           th:href="@{/login(originUrl=${#request.requestURL})}">로그인</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/join}">회원가입</a>
+                    </li>
+                </th:block>
+            </ul>
+        </nav>
+        <!-- 모바일 화면 -->
+        <nav class="navbar navbar-expand-lg navbar-light row d-lg-none">
+            <div class="col-4">
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                        data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <div class="col-4 text-center">
+                <a class="navbar-brand" th:href="@{/}">
+                    <img class="img-logo" src="/images/logo.png" alt="bluesky">
+                </a>
+            </div>
+            <div class="col-4">
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn-text"
+                            data-bs-toggle="offcanvas"
+                            data-bs-target="#offcanvasRight"
+                            aria-controls="offcanvasRight">
+                        <i class="fs-4-fixed bi bi-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="offcanvas offcanvas-start p-0" id="offcanvasNavbar">
+                <div class="offcanvas-header pb-0 justify-content-end ">
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="닫기"></button>
+                </div>
+                <div class="offcanvas-body mt-3 pt-0">
+                    <div class="pt-3 pb-3 border-top-gray" th:if="${boardDirectoryNavigation} != null">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <h3 class="fs-6 fw-bold">게시판</h3>
+                            </li>
+                            <li class="nav-item" th:each="entrySet : ${boardDirectoryNavigation.idAndNameMap}">
+                                <a class="nav-link active"
+                                   th:href="@{/{communityType}/board/{directoryId}
+                                   (communityType=${#strings.toLowerCase(communityType)}, directoryId=${entrySet.key})}"
+                                   th:text="${entrySet.value}">게시판 디렉토리</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pt-3 pb-3 border-top-gray">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <h3 class="fs-6 fw-bold">커뮤니티</h3>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" th:href="@{/programming}">프로그래밍</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" th:href="@{/english}">영어</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" th:href="@{/travel}">여행</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pt-3 pb-3 border-top-gray">
+                        <ul class="navbar-nav">
+                            <th:block th:if="${loginInfo.isLoginUser}">
+                                <li class="nav-item">
+                                    <a class="nav-link active"
+                                       th:href="@{/mypage}">마이페이지</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link active" th:href="@{/logout}">로그아웃</a>
+                                </li>
+                            </th:block>
+                            <th:block th:unless="${loginInfo.isLoginUser}">
+                                <li class="nav-item">
+                                    <a class="nav-link active"
+                                       th:href="@{/login(originUrl=${#request.requestURL})}">로그인</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link active" th:href="@{/join}">회원가입</a>
+                                </li>
+                            </th:block>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight">
+                <div class="p-0 pt-3">
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="닫기"></button>
+                    </div>
+                    <div class="search-bar ms-0 mt-3">
+                        <form class="d-flex" method="get" action="/search"
+                              th:data-element-name="searchForm">
+                            <div class="dropdown d-grid pe-2">
+                                <button class="p-0 btn-text dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="d-inline-block text-start"
+                                          th:data-element-name="currentSearchType">
+                                        <th:block th:switch="${searchType}">
+                                            <th:block th:case="null">제목 + 내용</th:block>
+                                            <th:block th:case="'title_content'">제목 + 내용</th:block>
+                                            <th:block th:case="'title'">제목</th:block>
+                                            <th:block th:case="'writer'">글 작성자</th:block>
+                                            <th:block th:case="'reply'">댓글</th:block>
+                                        </th:block>
+                                    </span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <li>
+                                        <button type="button" class="dropdown-item"
+                                                th:data-element-name="searchTypeButton"
+                                                th:data-search-type="title_content">제목 + 내용
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="dropdown-item"
+                                                th:data-element-name="searchTypeButton"
+                                                th:data-search-type="title">제목
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="dropdown-item"
+                                                th:data-element-name="searchTypeButton"
+                                                th:data-search-type="writer">글 작성자
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="dropdown-item"
+                                                th:data-element-name="searchTypeButton"
+                                                th:data-search-type="reply">댓글
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                            <input type="text" class="flex-grow-1 input-search" name="keyword"
+                                   th:value="${keyword}">
+                            <input type="hidden" name="type"
+                                   th:value="${searchType == null} ? title_content : ${#strings.toLowerCase(searchType)}"
+                                   th:data-element-name="searchTypeField">
+                            <button type="submit" class="btn-search"><i class="bi bi-search"></i></button>
+                        </form>
+                    </div>
+                </div>
+                <div class="offcanvas-body">
+                </div>
+            </div>
+        </nav>
+    </div>
+</header>

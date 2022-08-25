@@ -1,0 +1,22 @@
+<div id="failModal" class="modal" th:fragment="failModal (title, message)">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="fw-bold modal-title">
+                    <i class="me-2 bi bi-exclamation-triangle"></i><span id="failModalTitle" th:text="${title}">모달 제목</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+            </div>
+            <div class="modal-body mt-1 mb-1">
+                <span id="failModalBody" th:text="${message}">모달 본문</span>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-bs-dismiss="modal">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 샘플 코드
+<div th:replace="fragment/modal/fragment_fail_modal :: failModal (title='페이지 로딩 실패',message=${message})"></div>
+-->

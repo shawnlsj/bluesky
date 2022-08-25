@@ -18,5 +18,8 @@
     <attributeRule>
         <attribute name="size">
         </attribute>
+        <attribute name="style" override="false">
+            <allowedPattern><![CDATA[""]]></allowedPattern>
+        </attribute>
     </attributeRule>
 </config>

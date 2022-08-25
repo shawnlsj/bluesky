@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko-KR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragment/fragment_head :: head (~{::title},~{::head-block})}">
+    <meta charset="UTF-8">
+    <title th:if="${#request.getRequestURI().matches('.*/write/?$')}">bluesky - 글쓰기</title>
+    <title th:if="${#request.getRequestURI().matches('.*/modify/?$')}">bluesky - 글수정</title>
+    <th:block th:fragment="head-block">
+        <link rel="stylesheet" href="/css/community/community.css">
+        <link rel="stylesheet" href="/css/community/board/board_form.css"/>
+        <script type="module" src="/js/community/board/board_form.js" defer></script>
+    </th:block>
+</head>
+<body>
+<th:block th:if="${#request.getRequestURI().endsWith('write') or #request.getRequestURI().endsWith('write/')}">
+    <div th:replace="fragment/modal/fragment_fail_modal :: failModal (title='게시글 등록 실패',message='제한 글자 수를 초과하였습니다.')"></div>
+</th:block>
+<th:block th:if="${#request.getRequestURI().endsWith('modify') or #request.getRequestURI().endsWith('modify/')}">
+    <div th:replace="fragment/modal/fragment_fail_modal :: failModal (title='게시글 수정 실패',message='제한 글자 수를 초과하였습니다.')"></div>
+</th:block>
+<div class="body-wrapper">
+    <div class="header" th:replace="fragment/fragment_header :: header"></div>
+    <div class="main-container container-fluid">
+        <div class="row">
+            <div th:replace="fragment/community/board/fragment_board_directory :: directory"></div>
+            <div class="col-12 col-lg-8 pb-5">
+                <div th:replace="fragment/community/fragment_community_title :: title"></div>
+                <div>
+                    <form id="boardForm" th:object="${boardForm}">
+                        <div class="form-title">
+                            <label th:for="title" class="d-flex form-label">
+                                <span>제목&nbsp;</span>
+                                <span id="titleLengthWrapper" class="d-flex" data-overflow-length="false">
+                                        <span>(</span>
+                                        <span id="currentTitleLength">0</span>
+                                        <span>/</span>
+                                        <span id="maxTitleLength">9999</span>
+                                        <span>)</span>
+                                    </span>
+                            </label>
+                            <input id="title" name="title" class="form-control" type="text"
+                                   th:value="${board != null} ? ${board.title}"/>
+                        </div>
+                        <div class="mt-3">
+                            <div class="select-category">
+                                <label class="form-label" th:for="categoryId">카테고리 선택</label>
+                                <select th:field="*{categoryId}" class="form-select" aria-label="카테고리 선택">
+                                    <!--/* 카테고리 리스트의 요소들을 렌더링하기 전에
+                                            게시글이 속한 카테고리를 찾아 먼저 렌더링한다 */-->
+                                    <th:block th:if="${board != null}"
+                                              th:each="category : ${boardCategoryList}">
+                                        <option th:if="${board.categoryId == category.id}"
+                                                th:value="${category.id}"
+                                                th:text="${category.name}">카테고리명</option>
+                                    </th:block>
+                                    <!--/* 게시글이 속한 카테고리를 위에서 렌더링 해 놓았으므로
+                                           여기서 게시글이 속한 카테고리는 렌더링 하지 않는다 */-->
+                                    <th:block th:each="category : ${boardCategoryList}">
+                                        <option th:if="${board == null or board.categoryId != category.id}"
+                                                th:value="${category.id}"
+                                                th:text="${category.name}">카테고리명</option>
+                                    </th:block>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="editor-box mt-3">
+                            <div class="editor-toolbar-box">
+                                <div class="editor-toolbar">
+                                    <button class="btn-toggle btn-editor-toolbar-start" type="button" data-style="bold"
+                                            aria-pressed="false">
+                                        <b>가</b>
+                                    </button>
+                                    <button class="btn-toggle btn-editor-toolbar" type="button" data-style="italic"
+                                            aria-pressed="false">
+                                        <i>가</i>
+                                    </button>
+                                    <button class="btn-toggle btn-editor-toolbar" type="button" data-style="underline"
+                                            aria-pressed="false">
+                                        <u>가</u>
+                                    </button>
+                                    <button class="btn-toggle btn-editor-toolbar-end" type="button"
+                                            data-style="strikethrough"
+                                            aria-pressed="false">
+                                        <s>가</s>
+                                    </button>
+
+                                    <div class="dropdown-fontsize-box" data-active="false">
+                                        <button class="btn-fontsize" type="button">
+                                            글자 크기
+                                        </button>
+                                        <button class="btn-dropdown-fontsize btn-dropdown-fontsize-top" type="button"
+                                                data-fontsize="3">
+                                            가
+                                        </button>
+                                        <button class="btn-dropdown-fontsize" type="button" data-fontsize="5">
+                                            가
+                                        </button>
+                                        <button class="btn-dropdown-fontsize btn-dropdown-fontsize-bottom" type="button"
+                                                data-fontsize="6">
+                                            가
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="editor" class="editor" contenteditable="true"
+                                 th:utext="${board != null} ? ${board.content}"></div>
+                            <input type="hidden" name="content">
+                            <th:block th:if="${board == null}">
+                                <input type="hidden" th:field="*{communityType}">
+                                <input type="hidden" th:field="*{directoryId}">
+                            </th:block>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div class="d-inline-block mt-2 mb-0">
+                                <div id="contentLengthWrapper" class="d-flex" data-overflow-length="false">
+                                    <span>(</span>
+                                    <span id="currentContentLength">0</span>
+                                    <span>/</span>
+                                    <span id="maxContentLength">9999</span>
+                                    <span>) 글자 수</span>
+                                </div>
+                                <div id="htmlLengthWrapper" class="d-flex" data-overflow-length="false">
+                                    <span>(</span>
+                                    <span id="currentHtmlLength">0</span>
+                                    <span>/</span>
+                                    <span id="maxHtmlLength">9999</span>
+                                    <span>) HTML 사이즈</span>
+                                </div>
+                            </div>
+                            <div>
+                                <a th:if="${board != null}" class="btn btn-secondary mt-3 me-2"
+                                   th:href="@{${#request.requestURI.replaceFirst('/modify/?$','')}}">취소</a>
+                                <button type="submit" class="btn btn-primary mt-3"
+                                        th:text="${board == null} ? '등록' : '수정'">등록</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div th:replace="fragment/community/board/fragment_board_ranking :: boardRanking"></div>
+        </div>
+    </div>
+    <div class="footer" th:replace="fragment/fragment_footer :: footer"></div>
+</div>
+<script th:inline="javascript">
+    const MAX_TITLE_LENGTH
+        = [[${T(com.bluesky.mainservice.controller.community.board.constant.BoardOption).MAX_TITLE_LENGTH}]];
+    const MAX_CONTENT_LENGTH
+        = [[${T(com.bluesky.mainservice.controller.community.board.constant.BoardOption).MAX_CONTENT_LENGTH}]];
+    const MAX_HTML_LENGTH
+        = [[${T(com.bluesky.mainservice.controller.community.board.constant.BoardOption).MAX_HTML_LENGTH}]];
+    const httpMethod = [[${board == null} ? 'POST' : 'PUT']];
+    const boardId = [[${board != null} ? ${board.id}]];
+</script>
+</body>
+</html>

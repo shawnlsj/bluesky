@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ko-KR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragment/fragment_head :: head (~{::title},~{::head-block})}">
+    <meta charset="UTF-8">
+    <title th:text="${board.title}">bluesky - 글 제목</title>
+    <th:block th:fragment="head-block">
+        <link rel="stylesheet" href="/css/community/community.css">
+        <link rel="stylesheet" href="/css/community/board/board_content.css"/>
+        <script type="module" src="/js/community/board/board_content.js">
+        </script>
+    </th:block>
+</head>
+<body>
+<div th:replace="fragment/modal/fragment_fail_modal :: failModal (_,_)"></div>
+<div th:replace="fragment/modal/fragment_confirm_modal :: confirmModal (_,_)"></div>
+<div class="body-wrapper">
+    <div class="header" th:replace="fragment/fragment_header :: header"></div>
+    <div class="main-container container-fluid d-flex">
+        <div class="row flex-grow-1">
+            <div th:replace="fragment/community/board/fragment_board_directory :: directory"></div>
+            <div class="col-12 col-lg-8 pb-5">
+                <div th:replace="fragment/community/fragment_community_title :: title"></div>
+                <div class="pt-3 pb-3 mt-3 mb-3 border-top-gray border-bottom-gray">
+                    <div class="mb-2 d-flex align-items-center">
+                        <a th:href="@{/users/{userId}(userId=${board.userId})}">
+                            <img class="d-block board-content-profile"
+                                 th:src="@{/images/user/profile/{profileImage}(profileImage=${board.profileImage})}"
+                                 alt="profile">
+                        </a>
+                        <div class="ps-2 d-flex flex-column">
+                            <a class="fw-bold text-decoration-none text-dark"
+                               th:href="@{/users/{userId}(userId=${board.userId})}"
+                               th:text="${board.nickname}">게시글 작성자명</a>
+                            <div class="d-flex">
+                                <span class="fs-sm2 text-gray"
+                                      th:text="${#temporals.format(board.createdDate,'yyyy-MM-dd hh:mm')}"></span>
+                                <span class="ps-2 fs-sm2 text-gray" th:text="'조회 '+${board.viewCount}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-gray" th:text="'#'+${board.category}"></span>
+                    </div>
+                    <h1 class="m-0 fs-4 text-pre-wrap" th:text="${board.title}">글 제목</h1>
+                </div>
+                <div class="board-content-container text-pre-wrap" th:utext="${board.content}"></div>
+                <div class="pb-2 d-flex justify-content-center align-items-end position-relative">
+                    <div>
+                        <button type="button" id="boardLikesButton"
+                                class="btn-likes-board pt-1 d-flex justify-content-center align-items-center">
+                            <i id="boardLikesOnMark" class="pe-none toggle-block bi bi-heart-fill"
+                               aria-hidden="true"
+                               th:data-display="${board.likesClicked}"></i>
+                            <i id="boardLikesOffMark" class="pe-none toggle-block bi bi-heart"
+                               aria-hidden="true"
+                               th:data-display="!${board.likesClicked}"></i>
+                        </button>
+                        <div class="text-center">
+                            <span id="boardLikesCount" th:text="${board.likesCount}"></span>
+                        </div>
+                    </div>
+                    <div th:if="${loginInfo.isLoginUser and loginUserId == board.userId}"
+                         class="position-absolute end-0">
+                        <a class="me-2 fs-sm hover-transparent text-gray text-decoration-none"
+                           th:attrappend="href=${#request.getRequestURI().endsWith('/')} ?
+                           @{{requestUrl}modify(requestUrl=${#request.getRequestURI()})} :
+                           @{{requestUrl}/modify(requestUrl=${#request.getRequestURI()})}">수정</a>
+                        <button id="boardDeleteButton"
+                                class="p-0 fs-sm text-gray btn-text hover-transparent">삭제</button>
+                    </div>
+                </div>
+
+                <!-- 댓글 영역 -->
+                <div id="replyContainer" class="border-top-gray">
+                    <div id="replyList">
+                        <th:block th:fragment="replyListFragment">
+                            <div class="pt-2 pb-2">
+                                <span class="fw-bold">댓글</span>
+                                <span th:text="${replyCount}"></span>
+                            </div>
+                            <th:block th:each="reply:${replyList}">
+                                <div class="d-flex align-items-start pt-3 pb-3"
+                                     th:classappend="${reply.lastOfGroup}?'border-bottom-gray'"
+                                     data-element-name="replyItem"
+                                     th:data-reply-id="${reply.id}">
+                                    <div class="nested-reply-empty" th:unless="${reply.isTopLevel}">
+                                    </div>
+                                    <a th:href="@{/users/{userId}(userId=${reply.userId})}">
+                                        <img class="d-block reply-profile"
+                                             th:src="@{/images/user/profile/{profileImage}(profileImage=${reply.profileImage})}"
+                                             alt="profile">
+                                    </a>
+                                    <div class="flex-grow-1 d-flex flex-column ps-2">
+                                        <div class="d-flex align-items-end"
+                                             data-element-name="replyWriterWrapper">
+                                            <div class="text-truncate">
+                                                <a class="fw-bold pe-2 text-decoration-none text-dark"
+                                                   data-element-name="replyWriter"
+                                                   th:href="@{/users/{userId}(userId=${reply.userId})}"
+                                                   th:text="${reply.nickname}">댓글 작성자 닉네임</a>
+                                            </div>
+                                            <span th:if="${reply.userId == boardWriterId}"
+                                                  class="me-2 reply-writer">작성자</span>
+                                        </div>
+                                        <div class="pt-1"
+                                             th:unless="${#strings.isEmpty(reply.deletedBy)}"
+                                             th:switch="${reply.deletedBy}">
+                                                <span class="text-deleted-by" th:case="'ADMIN'">
+                                                   <i class="bi bi-exclamation-circle"></i> 관리자에 의해 삭제되었습니다.
+                                                </span>
+                                            <span class="text-deleted-by" th:case="'USER'">
+                                                   <i class="bi bi-exclamation-circle"></i> 사용자에 의해 삭제되었습니다.
+                                                </span>
+                                        </div>
+                                        <div class="toggle-block"
+                                             data-display="true"
+                                             data-element-name="replyContentWrapper"
+                                             th:if="${#strings.isEmpty(reply.deletedBy)}">
+                                            <div class="pt-1 pb-1">
+                                                <a class="reply-user-link" th:unless="${reply.isTopLevel}"
+                                                   th:href="@{/users/{userId}(userId=${reply.parentReplyUserId})}"
+                                                   th:text="'@'+${reply.parentReplyUserNickname}"></a>
+                                                <span data-element-name="replyContent"
+                                                      th:utext="${reply.content}">댓글 본문</span>
+                                            </div>
+                                            <div class="d-flex flex-wrap align-items-end">
+                                                <button type="button" class="p-0 fs-sm text-gray btn-text hover-transparent"
+                                                        data-element-name="nestedReplyButton">답글
+                                                </button>
+                                                <th:block
+                                                        th:if="${loginInfo.isLoginUser and loginUserId == reply.userId}">
+                                                    <button type="button"
+                                                            class="ms-2 p-0 fs-sm text-gray btn-text hover-transparent"
+                                                            data-element-name="replyModifyButton">수정
+                                                    </button>
+                                                    <button type="button"
+                                                            class="ms-2 p-0 fs-sm text-gray btn-text hover-transparent"
+                                                            data-element-name="replyDeleteButton">삭제
+                                                    </button>
+                                                </th:block>
+                                                <button type="button" class="ms-2 btn-likes-reply fs-sm2"
+                                                        data-element-name="replyLikesButton">
+                                                    <i data-element-name="replyLikesOnMark"
+                                                       class="pe-none toggle-block bi bi-heart-fill mark-likes-reply"
+                                                       aria-hidden="true"
+                                                       th:data-display="${reply.isLikesClicked}"></i>
+                                                    <i data-element-name="replyLikesOffMark"
+                                                       class="pe-none toggle-block bi bi-heart mark-likes-reply"
+                                                       aria-hidden="true"
+                                                       th:data-display="!${reply.isLikesClicked}"></i>
+                                                </button>
+                                                <span data-element-name="replyLikesCount" class="pe-3 fs-sm2"
+                                                      th:text="${reply.likesCount}">999</span>
+                                                <span class="fs-sm2 text-gray"
+                                                      th:text="${#temporals.format(reply.createdDate,'yyyy-MM-dd hh:mm')}">2022-10-15 11:15</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <nav th:if="${pageNavigation.endPageNum > 1}"
+                                 th:object="${pageNavigation}"
+                                 class="mt-4 d-flex justify-content-center"
+                                 aria-label="댓글 페이지 네비게이션">
+                                <ul class="m-0 pagination">
+                                    <!-- 이전, 처음 버튼-->
+                                    <th:block th:if="*{startPageNum != 1}">
+                                        <li>
+                                            <button type="button" class="page-button" aria-label="첫 페이지"
+                                                    data-element-name="pageButton"
+                                                    th:data-page="1">
+                                                <i class="pe-none bi bi-chevron-double-left" aria-hidden="true"></i>
+                                            </button>
+                                        </li>
+                                        <li class="ms-2">
+                                            <button type="button" class="page-button" aria-label="이전 페이지 묶음"
+                                                    data-element-name="pageButton"
+                                                    th:data-page="*{startPageNum - 1}">
+                                                <i class="pe-none bi bi-chevron-left" aria-hidden="true"></i>
+                                            </button>
+                                        </li>
+                                    </th:block>
+                                    <!-- 페이지 버튼 -->
+                                    <th:block th:if="*{endPageNum > 1}"
+                                              th:each="pageNum : *{#numbers.sequence(startPageNum, endPageNum)}">
+                                        <th:block th:if="${pageNum} == *{requestedPageNum}">
+                                            <li class="ms-2" aria-current="page">
+                                                <button type="button" class="page-button-now"
+                                                        th:text="${pageNum}"
+                                                        data-element-name="pageButton"
+                                                        th:data-page="${pageNum}">1
+                                                </button>
+                                            </li>
+                                        </th:block>
+                                        <th:block th:unless="${pageNum} == *{requestedPageNum}">
+                                            <li class="ms-2">
+                                                <button type="button" class="page-button"
+                                                        th:text="${pageNum}"
+                                                        data-element-name="pageButton"
+                                                        th:data-page="${pageNum}">1
+                                                </button>
+                                            </li>
+                                        </th:block>
+                                    </th:block>
+                                    <!-- 다음, 끝 버튼-->
+                                    <th:block th:if="*{totalPagesNum > endPageNum}">
+                                        <li class="ms-2">
+                                            <button type="button" class="page-button" aria-label="다음 페이지 묶음"
+                                                    data-element-name="pageButton"
+                                                    th:data-page="*{endPageNum + 1}">
+                                                <i class="pe-none bi bi-chevron-right" aria-hidden="true"></i>
+                                            </button>
+                                        </li>
+                                        <li class="ms-2">
+                                            <button type="button" class="page-button" aria-label="마지막 페이지"
+                                                    data-element-name="pageButton"
+                                                    th:data-page="*{totalPagesNum}">
+                                                <i class="pe-none bi bi-chevron-double-right" aria-hidden="true"></i>
+                                            </button>
+                                        </li>
+                                    </th:block>
+                                </ul>
+                            </nav>
+                        </th:block>
+                    </div>
+                    <!-- 댓글 영역 끝 -->
+                    <!-- 댓글 폼 시작 -->
+                    <div th:unless="${loginInfo.isLoginUser}"
+                         class="text-center mt-4">
+                        <span>댓글 쓰기는 <a th:href="@{/login(originUrl=${#request.requestURL})}">로그인</a> 후 이용하여 주세요.</span>
+                    </div>
+                    <div th:if="${loginInfo.isLoginUser}"
+                         class="mt-4"
+                         data-element-name="replySaveFormContainer">
+                        <form data-element-name="replySaveForm">
+                            <textarea data-element-name="replyEditor" class="form-control" rows="3"
+                                      placeholder="댓글을 입력해주세요."></textarea>
+                            <div class="d-flex justify-content-between">
+                                <div data-element-name="contentLengthWrapper" class="d-inline-flex mt-2"
+                                     data-overflow-length="false">
+                                    <span>(</span>
+                                    <span data-element-name="currentContentLength">0</span>
+                                    <span>/</span>
+                                    <!-- 댓글 최대 길이-->
+                                    <span th:text="${T(com.bluesky.mainservice.controller.community.board.constant.ReplyOption).MAX_CONTENT_LENGTH}">9999</span>
+                                    <span>)</span>
+                                </div>
+                                <button type="submit" class="btn btn-primary mt-3 toggle-block"
+                                        data-display="true"
+                                        data-element-name="replySubmitButton">등록
+                                </button>
+                                <button type="button" class="btn btn-primary mt-3 toggle-block"
+                                        data-display="false"
+                                        data-element-name="replySubmitButtonSpinner"
+                                        disabled>
+                                    <span class="spinner-border spinner-border-sm" role="status"
+                                          aria-hidden="true"></span>
+                                    <span class="visually-hidden">로딩 중...</span>
+                                </button>
+                            </div>
+                            <input type="hidden" name="boardId" th:value="${board.id}">
+                            <input type="hidden" name="content" data-element-name="contentField">
+                        </form>
+                    </div>
+                    <div data-element-name="nestedReplySaveFormContainer"
+                         class="border-bottom-gray border-top-gray pt-3 pb-3 toggle-flex"
+                         data-display="false">
+                        <div class="nested-reply-empty">
+                        </div>
+                        <form data-element-name="replySaveForm" class="flex-grow-1">
+                            <textarea data-element-name="replyEditor" class="form-control" rows="3"
+                                      placeholder="댓글을 입력해주세요."></textarea>
+                            <div class="d-flex justify-content-between">
+                                <div data-element-name="contentLengthWrapper" class="d-inline-flex mt-2"
+                                     data-overflow-length="false">
+                                    <span>(</span>
+                                    <span data-element-name="currentContentLength">0</span>
+                                    <span>/</span>
+                                    <!-- 댓글 최대 길이-->
+                                    <span th:text="${T(com.bluesky.mainservice.controller.community.board.constant.ReplyOption).MAX_CONTENT_LENGTH}">9999</span>
+                                    <span>)</span>
+                                </div>
+                                <div class="d-flex">
+                                    <button type="submit" class="btn btn-primary mt-3 toggle-block"
+                                            data-display="true"
+                                            data-element-name="replySubmitButton">등록
+                                    </button>
+                                    <button type="button" class="btn btn-primary mt-3 toggle-block"
+                                            data-display="false"
+                                            data-element-name="replySubmitButtonSpinner"
+                                            disabled>
+                                    <span class="spinner-border spinner-border-sm" role="status"
+                                          aria-hidden="true"></span>
+                                        <span class="visually-hidden">로딩 중...</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="hidden" name="boardId" th:value="${board.id}">
+                            <input type="hidden" name="replyId" data-element-name="replyIdField">
+                            <input type="hidden" name="content" data-element-name="contentField">
+                        </form>
+                    </div>
+                    <div data-element-name="replyUpdateFormContainer"
+                         class="pt-2 toggle-flex flex-grow-1"
+                         data-display="false">
+                        <form data-element-name="replyUpdateForm" class="flex-grow-1">
+                            <textarea data-element-name="replyEditor" class="form-control" rows="3"
+                                      placeholder="댓글을 입력해주세요."></textarea>
+                            <div class="d-flex justify-content-between">
+                                <div data-element-name="contentLengthWrapper" class="d-inline-flex mt-2"
+                                     data-overflow-length="false">
+                                    <span>(</span>
+                                    <span data-element-name="currentContentLength">0</span>
+                                    <span>/</span>
+                                    <!-- 댓글 최대 길이-->
+                                    <span th:text="${T(com.bluesky.mainservice.controller.community.board.constant.ReplyOption).MAX_CONTENT_LENGTH}">9999</span>
+                                    <span>)</span>
+                                </div>
+                                <div class="d-flex">
+                                    <button type="button" class="me-2 btn btn-secondary mt-3 toggle-block"
+                                            data-display="true"
+                                            data-element-name="replyCancelButton">취소
+                                    </button>
+                                    <button type="submit" class="btn btn-primary mt-3 toggle-block"
+                                            data-display="true"
+                                            data-element-name="replySubmitButton">수정
+                                    </button>
+                                    <button type="button" class="btn btn-primary mt-3 toggle-block"
+                                            data-display="false"
+                                            data-element-name="replySubmitButtonSpinner"
+                                            disabled>
+                                    <span class="spinner-border spinner-border-sm" role="status"
+                                          aria-hidden="true"></span>
+                                        <span class="visually-hidden">로딩 중...</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="hidden" data-element-name="replyIdField">
+                            <input type="hidden" name="content" data-element-name="contentField">
+                        </form>
+                    </div>
+                    <!-- 댓글 폼 끝 -->
+                </div>
+            </div>
+            <div th:replace="fragment/community/board/fragment_board_ranking :: boardRanking"></div>
+        </div>
+    </div>
+    <div class="footer" th:replace="fragment/fragment_footer :: footer"></div>
+</div>
+<script th:inline="javascript">
+    const isLoginUser = [[${loginInfo.isLoginUser}]];
+    const boardId = [[${board.id}]];
+    const MAX_CONTENT_LENGTH
+        = [[${T(com.bluesky.mainservice.controller.community.board.constant.ReplyOption).MAX_CONTENT_LENGTH}]];
+</script>
+</body>
+</html>

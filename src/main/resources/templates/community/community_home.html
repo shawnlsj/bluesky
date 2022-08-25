@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko-KR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragment/fragment_head :: head (~{::title},~{::head-block})}">
+    <meta charset="UTF-8">
+    <title>bluesky - 메인</title>
+    <th:block th:fragment="head-block">
+        <link rel="stylesheet" href="/css/community/community.css">
+    </th:block>
+</head>
+<body>
+<div class="body-wrapper">
+    <div class="header" th:replace="fragment/fragment_header :: header"></div>
+    <div class="main-container container-fluid d-flex">
+        <div class="row flex-grow-1">
+            <div th:replace="fragment/community/board/fragment_board_directory :: directory"></div>
+            <div class="col-12 col-lg-10">
+                <div th:replace="fragment/community/fragment_community_title :: title"></div>
+                <div class="d-flex flex-column flex-lg-row flex-grow-1 mb-4">
+                    <div class="pt-lg-3 pb-3 pe-lg-3 flex-lg-grow-1">
+                        <div class="mb-2">
+                            <span class="fw-bold">인기 게시글 👍</span>
+                        </div>
+                        <div class="pt-2 pb-2 d-flex flex-column border-bottom-gray" th:each="board : ${bestBoardList}">
+                            <a class="text-decoration-none text-dark hover-transparent"
+                               th:href="@{/{communityType}/board/{directoryId}/{boardId}
+                                       (communityType=${#strings.toLowerCase(board.communityType)},
+                                       directoryId=${board.boardDirectoryId},
+                                       boardId=${board.id})}">
+                                <span class="text-pre-wrap" th:text="${board.title}"></span>
+                                <span class="count-reply"
+                                      th:text="'['+${board.replyCount}+']'">[1]</span>
+                            </a>
+                            <div class="d-flex pt-1 fs-sm text-gray">
+                                <a class="pe-2 text-decoration-none text-gray hover-transparent"
+                                   th:href="@{/{communityType}/board/{directoryId}
+                                (communityType=${#strings.toLowerCase(board.communityType)},
+                                directoryId=${board.boardDirectoryId})}">
+                                    <span th:text="${board.boardDirectoryName}"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-lg-none section-line"></div>
+                    <div class="pt-3 pb-3 pe-lg-3 flex-lg-grow-1">
+                        <div class="mb-2">
+                            <span class="fw-bold">최근 등록된 게시글 🕓</span>
+                        </div>
+                        <div class="pt-2 pb-2 d-flex flex-column border-bottom-gray" th:each="board : ${recentBoardList}">
+                            <a class="text-decoration-none text-dark hover-transparent"
+                               th:href="@{/{communityType}/board/{directoryId}/{boardId}
+                                       (communityType=${#strings.toLowerCase(board.communityType)},
+                                       directoryId=${board.boardDirectoryId},
+                                       boardId=${board.id})}">
+                                <span class="text-pre-wrap" th:text="${board.title}"></span>
+                                <span class="count-reply"
+                                      th:text="'['+${board.replyCount}+']'">[1]</span>
+                            </a>
+                            <div class="d-flex pt-1 fs-sm text-gray">
+                                <a class="pe-2 text-decoration-none text-gray hover-transparent"
+                                   th:href="@{/{communityType}/board/{directoryId}
+                                (communityType=${#strings.toLowerCase(board.communityType)},
+                                directoryId=${board.boardDirectoryId})}">
+                                    <span th:text="${board.boardDirectoryName}"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer" th:replace="fragment/fragment_footer :: footer"></div>
+</div>
+</body>
+</html>

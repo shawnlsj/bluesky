@@ -4,9 +4,14 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+local_keystore
 
 ### IntelliJ IDEA ###
 out/
+.idea/dataSources.local.xml
+.idea/dataSources.xml
+.idea/dataSources
+.idea/dictionaries
 .idea/**/shelf
 .idea/**/workspace.xml
 !**/src/main/**/out/

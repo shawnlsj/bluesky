@@ -1,0 +1,21 @@
+<div th:fragment="title">
+    <div class="pt-1 pb-2 mb-2">
+        <div class="fs-3" th:switch="${communityType.name}">
+            <a class="text-decoration-none text-dark" th:case="PROGRAMMING" th:href="@{/programming}">
+                프로그래밍 커뮤니티
+            </a>
+            <a class="text-decoration-none text-dark" th:case="ENGLISH" th:href="@{/english}">
+                영어 커뮤니티
+            </a>
+            <a class="text-decoration-none text-dark" th:case="TRAVEL" th:href="@{/travel}">
+                여행 커뮤니티
+            </a>
+        </div>
+        <div class="fs-5 mt-2" th:if="${boardDirectoryNavigation.currentId} != null" th:object="${boardDirectoryNavigation}">
+            <a class="d-flex text-decoration-none text-dark" th:href="${#request.getRequestURI()}">
+                <i class="bi bi-caret-right-fill"></i>
+                <span class="ps-1" th:text="*{idAndNameMap.get(currentId)}"></span>
+            </a>
+        </div>
+    </div>
+</div>
