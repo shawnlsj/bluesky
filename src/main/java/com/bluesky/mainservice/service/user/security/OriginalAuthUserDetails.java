@@ -3,19 +3,30 @@ package com.bluesky.mainservice.service.user.security;
 import com.bluesky.mainservice.repository.user.domain.User;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
 @Getter
-@Builder
 public class OriginalAuthUserDetails implements UserDetails {
 
-    private User user;
-    private String username;
-    private String password;
-    private List<GrantedAuthority> authorities;
+    private final User user;
+    private final String username;
+    private final String password;
+    private final List<GrantedAuthority> authorities;
+
+    @Builder
+    private OriginalAuthUserDetails(@NonNull User user,
+                                    @NonNull String username,
+                                    @NonNull String password,
+                                    @NonNull List<GrantedAuthority> authorities) {
+        this.user = user;
+        this.username = username;
+        this.password = password;
+        this.authorities = authorities;
+    }
 
     @Override
     public boolean isAccountNonExpired() {
