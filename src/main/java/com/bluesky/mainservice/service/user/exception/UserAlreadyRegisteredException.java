@@ -6,6 +6,10 @@ package com.bluesky.mainservice.service.user.exception;
  */
 public class UserAlreadyRegisteredException extends RuntimeException {
 
+    public UserAlreadyRegisteredException() {
+        super("이미 등록된 사용자입니다.");
+    }
+
     public UserAlreadyRegisteredException(String message) {
         super(message);
     }
