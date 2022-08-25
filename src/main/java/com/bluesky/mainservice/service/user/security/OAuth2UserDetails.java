@@ -1,22 +1,21 @@
 package com.bluesky.mainservice.service.user.security;
 
 import com.bluesky.mainservice.repository.user.domain.User;
-import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
 import java.util.Map;
 
-@Getter
-@Builder
+@RequiredArgsConstructor
 public class OAuth2UserDetails implements OAuth2User {
 
-    @Getter(AccessLevel.PRIVATE)
-    private OAuth2User oAuth2User;
-    private User user;
+    private final OAuth2User oAuth2User;
+
+    @Getter
+    private final User user;
 
     @Override
     public Map<String, Object> getAttributes() {

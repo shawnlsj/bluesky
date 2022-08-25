@@ -1,6 +1,6 @@
 package com.bluesky.mainservice.controller.user.dto;
 
-import com.bluesky.mainservice.controller.validation.Email;
+import com.bluesky.mainservice.controller.user.validation.Email;
 import lombok.Getter;
 
 @Getter

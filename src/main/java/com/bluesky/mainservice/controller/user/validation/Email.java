@@ -1,4 +1,4 @@
-package com.bluesky.mainservice.controller.validation;
+package com.bluesky.mainservice.controller.user.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -12,6 +12,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(FIELD)
 @Retention(RUNTIME)
 public @interface Email {
+
     String message() default "이메일 형식이 올바르지 않음";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
