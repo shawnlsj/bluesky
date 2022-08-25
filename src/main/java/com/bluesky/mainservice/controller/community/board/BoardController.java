@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -473,5 +474,11 @@ public class BoardController {
 
         //두 리스트를 묶어서 반환
         return new BoardRanking(likesCountRankingBoardList, viewCountRankingBoardList);
+    }
+
+    @ExceptionHandler(BoardNotFoundException.class)
+    void handleBoardNotFoundEx(BoardNotFoundException e, HttpServletResponse response) throws IOException {
+        log.debug("이미 삭제된 게시글 입니다.", e);
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 }
