@@ -9,27 +9,129 @@
     </th:block>
 </head>
 <body>
-<div id="failModal" class="modal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 id="failModalTitle" class="fw-bold modal-title">
-                    <i class="me-2 bi bi-exclamation-triangle"></i>페이지 로딩 실패
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body mt-1 mb-1">
-                <span id="failModalBody" th:text="${message}"></span>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" data-bs-dismiss="modal">확인</button>
-            </div>
-        </div>
-    </div>
-</div>
+<div th:replace="fragment/modal/fragment_fail_modal :: failModal (title='페이지 로딩 실패',message=${message})"></div>
 <div class="body-wrapper">
     <div class="header" th:replace="fragment/fragment_header :: header"></div>
-    <div class="body-container container-fluid">
+    <div class="main-container container-fluid">
+        <div class="pt-1 pb-2 mb-2">
+            <div class="fs-3">
+                <h3 class="d-inline">통합 게시글 정보</h3>
+            </div>
+        </div>
+        <div class="d-lg-flex flex-grow-1 ">
+            <div class="d-flex flex-column flex-lg-row flex-grow-1 mb-4">
+                <div class="pt-lg-3 pb-3 pe-lg-3 flex-lg-grow-1">
+                    <div class="mb-2">
+                        <span class="fw-bold">인기 게시글 👍</span>
+                    </div>
+                    <div class="pt-2 pb-2 d-flex flex-column border-bottom-gray" th:each="board : ${bestBoardList}">
+                        <a class="text-decoration-none text-dark hover-transparent"
+                           th:href="@{/{communityType}/board/{directoryId}/{boardId}
+                                       (communityType=${#strings.toLowerCase(board.communityType)},
+                                       directoryId=${board.boardDirectoryId},
+                                       boardId=${board.id})}">
+                            <span class="text-pre-wrap" th:text="${board.title}"></span>
+                            <span class="count-reply"
+                                  th:text="'['+${board.replyCount}+']'">[1]</span>
+                        </a>
+                        <div class="d-flex pt-1 fs-sm text-gray">
+                            <a class="pe-2 text-decoration-none text-gray hover-transparent"
+                               th:href="@{/{communityType}/board/{directoryId}
+                                (communityType=${#strings.toLowerCase(board.communityType)},
+                                directoryId=${board.boardDirectoryId})}">
+                                <th:block th:switch="${board.communityType.name()}">
+                                    <span th:case="'PROGRAMMING'">프로그래밍</span>
+                                    <span th:case="'ENGLISH'">영어</span>
+                                    <span th:case="'TRAVEL'">여행</span>
+                                </th:block>
+                                <i class="bi bi-dot"></i>
+                                <span th:text="${board.boardDirectoryName}"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-lg-none section-line"></div>
+                <div class="pt-3 pb-3 pe-lg-3 flex-lg-grow-1">
+                    <div class="mb-2">
+                        <span class="fw-bold">최근 등록된 게시글 🕓</span>
+                    </div>
+                    <div class="pt-2 pb-2 d-flex flex-column border-bottom-gray"
+                         th:each="board : ${recentBoardList}">
+                        <a class="text-decoration-none text-dark hover-transparent"
+                           th:href="@{/{communityType}/board/{directoryId}/{boardId}
+                                       (communityType=${#strings.toLowerCase(board.communityType)},
+                                       directoryId=${board.boardDirectoryId},
+                                       boardId=${board.id})}">
+                            <span class="text-pre-wrap" th:text="${board.title}"></span>
+                            <span class="count-reply"
+                                  th:text="'['+${board.replyCount}+']'">[1]</span>
+                        </a>
+                        <div class="d-flex pt-1 fs-sm text-gray">
+                            <a class="pe-2 text-decoration-none text-gray hover-transparent"
+                               th:href="@{/{communityType}/board/{directoryId}
+                                (communityType=${#strings.toLowerCase(board.communityType)},
+                                directoryId=${board.boardDirectoryId})}">
+                                <th:block th:switch="${board.communityType.name()}">
+                                    <span th:case="'PROGRAMMING'">프로그래밍</span>
+                                    <span th:case="'ENGLISH'">영어</span>
+                                    <span th:case="'TRAVEL'">여행</span>
+                                </th:block>
+                                <i class="bi bi-dot"></i>
+                                <span th:text="${board.boardDirectoryName}"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-lg-none section-line"></div>
+            </div>
+            <div class="p-lg-2 ps-lg-3 pt-lg-3 flex-lg-shrink-0 board-count-container">
+                <div>
+                    <span class="fw-bold">오늘 등록된 글 📅</span>
+                </div>
+                <div class="d-flex flex-column mt-3 pb-3 border-bottom-gray">
+                    <div>
+                        <a class="text-decoration-none text-dark fw-bold" href="/programming">프로그래밍</a>
+                    </div>
+                    <div class="mt-1 pt-2 d-flex" th:each="boardDirectory : ${boardCountStatusList}"
+                         th:if="${boardDirectory.communityType == boardDirectory.communityType.PROGRAMMING}">
+                        <a class="text-decoration-none text-dark d-inline-block pe-2 board-count-wrapper"
+                           th:href="@{/{community}/board/{directoryId}
+                           (community=${#strings.toLowerCase(boardDirectory.communityType.name())},
+                           directoryId=${boardDirectory.boardDirectoryId})}"
+                           th:text="${boardDirectory.boardDirectoryName}"></a>
+                        <span class="flex-grow-1" th:text="${boardDirectory.boardCount}"></span>
+                    </div>
+                </div>
+                <div class="d-flex flex-column mt-3 pb-3 border-bottom-gray">
+                    <div>
+                        <a class="text-decoration-none text-dark fw-bold" href="/english">영어</a>
+                    </div>
+                    <div class="mt-1 pt-2 d-flex" th:each="boardDirectory : ${boardCountStatusList}"
+                         th:if="${boardDirectory.communityType == boardDirectory.communityType.ENGLISH}">
+                        <a class="text-decoration-none text-dark d-inline-block pe-2 board-count-wrapper"
+                           th:href="@{/{community}/board/{directoryId}
+                           (community=${#strings.toLowerCase(boardDirectory.communityType.name())},
+                           directoryId=${boardDirectory.boardDirectoryId})}"
+                           th:text="${boardDirectory.boardDirectoryName}"></a>
+                        <span class="flex-grow-1" th:text="${boardDirectory.boardCount}"></span>
+                    </div>
+                </div>
+                <div class="d-flex flex-column mt-3 pb-3 mb-3 border-bottom-gray">
+                    <div>
+                        <a class="text-decoration-none text-dark fw-bold" href="/travel">여행</a>
+                    </div>
+                    <div class="mt-1 pt-2 d-flex" th:each="boardDirectory : ${boardCountStatusList}"
+                         th:if="${boardDirectory.communityType == boardDirectory.communityType.TRAVEL}">
+                        <a class="text-decoration-none text-dark d-inline-block pe-2 board-count-wrapper"
+                           th:href="@{/{community}/board/{directoryId}
+                           (community=${#strings.toLowerCase(boardDirectory.communityType.name())},
+                           directoryId=${boardDirectory.boardDirectoryId})}"
+                           th:text="${boardDirectory.boardDirectoryName}"></a>
+                        <span class="flex-grow-1" th:text="${boardDirectory.boardCount}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="footer" th:replace="fragment/fragment_footer :: footer"></div>
 </div>
