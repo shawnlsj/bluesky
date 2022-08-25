@@ -29,19 +29,15 @@ public class UserDetailsLoader implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmailAndAccountType(username, AccountType.ORIGINAL);
-        return entityToUserDetails(user);
+        return entityToUserDetails(userRepository.findByEmailAndAccountType(username, AccountType.ORIGINAL)
+                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자입니다.")));
     }
 
     public Optional<LoginUserDetails> loadLoginUserByUuid(UUID userId, boolean isAdmin) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         if (isAdmin) {
-            User user = userRepository.findByUuid(userId);
-
-            //조회된 사용자가 없을 경우 예외 발생
-            if (user == null) {
-                throw new UserNotFoundException("존재하지 않는 사용자입니다.");
-            }
+            User user = userRepository.findByUuid(userId)
+                    .orElseThrow(UserNotFoundException::new);
 
             //현재 관리자가 아닌 사용자라면 비어있는 Optional 객체를 리턴
             if (!user.isAdmin()) {
@@ -62,11 +58,6 @@ public class UserDetailsLoader implements UserDetailsService {
     }
 
     private UserDetails entityToUserDetails(User user) {
-        //유저를 조회하고 존재하는 유저인지 확인
-        if (user == null) {
-            throw new UsernameNotFoundException("존재하지 않는 계정입니다.");
-        }
-
         //유저가 보유하고 있는 권한들을 리스트에 담음
         List<GrantedAuthority> authorities = new ArrayList<>();
         grantAuthorities(user, authorities);
