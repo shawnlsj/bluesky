@@ -19,6 +19,9 @@ public class BoardOption {
     //일간 랭킹 게시글 페이지 크기
     public static final int DAILY_RANKING_PAGE_SIZE = 5;
 
+    //인기 게시글의 최소 좋아요 수
+    public static final int BEST_BOARD_MIN_LIKES_COUNT = 1;
+
     //홈 화면에서 조회할 게시글 크기
     public static final int PAGE_SIZE_IN_HOME = 13;
 }

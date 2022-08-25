@@ -37,7 +37,7 @@ public class CommunityHomeController {
                         .page(1)
                         .pageSize(BoardOption.PAGE_SIZE_IN_HOME)
                         .communityType(communityType)
-                        .minLikesCount(1)
+                        .minLikesCount(BoardOption.BEST_BOARD_MIN_LIKES_COUNT)
                         .build();
         Page<BoardTitleNoUserDto> bestBoardPage = boardRepository.searchBoardTitleNoUserDto(bestBoardListSearchCondition);
         List<BoardResponseDto.SimpleBoardSignature> bestBoardList =
