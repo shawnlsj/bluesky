@@ -1,77 +1,103 @@
-<footer class="bg-light" th:fragment="footer">
+<footer class="bg-light footer" th:fragment="footer">
     <!--데스크탑 화면-->
-    <div class="container-fluid pt-5 pb-5 d-none d-md-block">
+    <div class="container-fluid pt-4 pb-4 d-none d-lg-block">
         <div class="row">
-            <div class="col-md-4 offset-md-3">
-                <p class="fw-bold">
-                    COMMUNITY
-                </p>
-                <ul class="list-unstyled">
-                    <li>
-                        <a>자유 게시판</a>
-                    </li>
-                </ul>
+            <div class="col-lg-4 offset-lg-3">
+                <div>
+                    <p class="fw-bold">
+                        COMMUNITY
+                    </p>
+                </div>
+                <div>
+                    <ul class="list-unstyled">
+                        <li>
+                            <a class="text-decoration-none text-dark" th:href="@{/programming}">프로그래밍</a>
+                        </li>
+                        <li class="mt-1">
+                            <a class="text-decoration-none text-dark" th:href="@{/english}">영어</a>
+                        </li>
+                        <li class="mt-1">
+                            <a class="text-decoration-none text-dark" th:href="@{/travel}">여행</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div class="col-md-5">
-                <p class="ms-1 fw-bold">
-                    CONTACT
-                </p>
-                <ul class="list-unstyled">
-                    <li><a class="text-dark text-decoration-none" href="https://github.com/shawnlsj/bluesky">
+            <div class="col-lg-5">
+                <div>
+                    <p class="ms-1 fw-bold">
+                        CONTACT
+                    </p>
+                </div>
+                <div>
+                    <ul class="list-unstyled">
+                        <li><a class="text-dark text-decoration-none" href="https://github.com/shawnlsj/bluesky">
                         <span class="text-center d-inline-block layout-icon-footer">
                             <i class="bi bi-github"></i>
                         </span>
-                        <span>
+                            <span>
                             GitHub
                         </span>
-                    </a>
-                    </li>
-                    <li>
+                        </a>
+                        </li>
+                        <li>
                         <span class="text-center d-inline-block layout-icon-footer">
                             <i class="bi bi-envelope-fill"></i></span>
-                        <span>
+                            <span>
                              hortensia08@naver.com
                         </span>
-                    </li>
-                </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
     <!--모바일 화면-->
-    <div class="container-fluid pt-5 pb-5 d-md-none">
+    <div class="container-fluid pt-5 pb-5 d-lg-none">
         <div class="row">
             <div class="col-12">
-                <p class="fw-bold">
-                    COMMUNITY
-                </p>
-                <ul class="list-unstyled">
-                    <li>
-                        <a>자유 게시판</a>
-                    </li>
-                </ul>
+                <div>
+                    <p class="fw-bold">COMMUNITY</p>
+                </div>
+                <div>
+                    <ul class="list-unstyled d-inline-blockasd">
+                        <li class="d-inline-block">
+                            <a class="text-decoration-none text-dark" th:href="@{/programming}">프로그래밍</a>
+                        </li>
+                        <li class="ms-2 vl-sm">
+                        </li>
+                        <li class="ps-2 d-inline-block">
+                            <a class="text-decoration-none text-dark" th:href="@{/english}">영어</a>
+                        </li>
+                        <li class="ms-2 vl-sm">
+                        </li>
+                        <li class="ps-2 d-inline-block">
+                            <a class="text-decoration-none text-dark" th:href="@{/travel}">여행</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
+        </div>
+        <div class="row">
             <div class="col-12 mt-3">
-                <p class="ms-1 fw-bold">
-                    CONTACT
-                </p>
-                <ul class="list-unstyled">
-                    <li><a class="text-dark text-decoration-none" href="https://github.com/shawnlsj/bluesky">
+                <div>
+                    <p class="ms-1 fw-bold">
+                        CONTACT
+                    </p>
+                </div>
+                <div>
+                    <a class="text-dark text-decoration-none" href="https://github.com/shawnlsj/bluesky">
                         <span class="text-center d-inline-block layout-icon-footer">
                             <i class="bi bi-github"></i>
                         </span>
-                        <span>
-                            GitHub
-                        </span>
+                        <span>GitHub</span>
                     </a>
-                    </li>
-                    <li>
-                        <span class="text-center d-inline-block layout-icon-footer">
-                            <i class="bi bi-envelope-fill"></i></span>
-                        <span>
-                             hortensia08@naver.com
-                        </span>
-                    </li>
-                </ul>
+                </div>
+                <div>
+                    <span class="text-center d-inline-block layout-icon-footer">
+                        <i class="bi bi-envelope-fill"></i>
+                    </span>
+                    <span>hortensia08@naver.com</span>
+                </div>
             </div>
         </div>
     </div>
