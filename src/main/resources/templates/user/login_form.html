@@ -9,24 +9,7 @@
     </th:block>
 </head>
 <body>
-<div id="failModal" class="modal">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 id="failModalTitle" class="fw-bold modal-title">
-                    <i class="me-2 bi bi-exclamation-triangle"></i>로그인 실패
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body mt-1 mb-1">
-                <span id="failModalMessage">이메일 또는 비밀번호를 다시 확인해 주세요.</span>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" data-bs-dismiss="modal">확인</button>
-            </div>
-        </div>
-    </div>
-</div>
+<div th:replace="fragment/modal/fragment_fail_modal :: failModal (title='로그인 실패',message='이메일 또는 비밀번호를 다시 확인해 주세요.')"></div>
 <div class="container-fluid">
     <div class="text-center">
         <a th:href="@{/}">
@@ -64,8 +47,7 @@
         <span class="vl-sm ms-2 me-2"></span>
         <a class="text-dark text-decoration-none" th:href="@{/join}">회원가입</a>
     </div>
-    <div class="mt-4">
-        <hr>
+    <div class="mt-4 pt-3 border-top-gray">
         <p class="fw-bold">간편 로그인</p>
         <a class="text-decoration-none" href="/oauth2/authorization/google">
             <div class="layout-btn layout-btn-google d-flex">
@@ -99,5 +81,9 @@
         </a>
     </div>
 </div>
+<script th:inline="javascript">
+    const MAX_EMAIL_LENGTH
+        = [[${T(com.bluesky.mainservice.controller.user.constant.UserOption).MAX_EMAIL_LENGTH}]];
+</script>
 </body>
 </html>
