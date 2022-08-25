@@ -8,17 +8,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
-public class XssInterceptor implements HandlerInterceptor  {
+public class FilteredXssChecker implements HandlerInterceptor  {
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         if (request.getParameter("content") != null) {
-            if (request.getParameter("content").toString().contains("<!-- Not Allowed Tag Filtered")
-                    || request.getParameter("content").toString().contains("<!-- Not Allowed Attribute Filtered")) {
+            if (request.getParameter("content").contains("<!-- Not Allowed Tag Filtered")
+                    || request.getParameter("content").contains("<!-- Not Allowed Attribute Filtered")) {
                 try {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST);
                 } catch (IOException e) {
                     log.error("url : {} ", request.getRequestURI(), e);
                 }
+                log.debug("content : {}",request.getParameter("content"));
                 return false;
             }
         }
