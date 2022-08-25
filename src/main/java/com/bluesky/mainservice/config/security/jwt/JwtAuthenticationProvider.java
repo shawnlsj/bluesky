@@ -16,10 +16,10 @@ public class JwtAuthenticationProvider {
     private final JwtGenerator jwtGenerator;
 
     public Authentication authenticate(String accessToken) {
-        AccessTokenInfo accessTokenInfo = jwtGenerator.parseAccessToken(accessToken);
+        AccessTokenParseData accessTokenParseData = jwtGenerator.parseAccessToken(accessToken);
 
         Optional<LoginUserDetails> loginUserDetails = userDetailsLoader
-                .loadLoginUserByUuid(accessTokenInfo.getUserId(), accessTokenInfo.isAdmin());
+                .loadLoginUserByUuid(accessTokenParseData.getUserId(), accessTokenParseData.isAdmin());
 
         if (loginUserDetails.isEmpty()) {
             return null;
