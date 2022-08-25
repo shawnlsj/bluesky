@@ -3,7 +3,7 @@ import {PasswordValidator} from "/js/validation/password_validator.js";
 import {NicknameValidator} from "/js/validation/nickname_validator.js";
 
 (function execute() {
-    const form = document.getElementById("joinForm");
+    const form = document.getElementById("userSaveForm");
     const sendButton = document.getElementById("sendButton");
     const sendButtonSpinner = document.getElementById("sendButtonSpinner");
 
