@@ -1,4 +1,4 @@
-package com.bluesky.mainservice.unit;
+package com.bluesky.mainservice.unit.validation;
 
 import com.bluesky.mainservice.controller.user.constant.UserOption;
 import com.bluesky.mainservice.controller.user.validation.EmailValidator;
