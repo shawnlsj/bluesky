@@ -13,7 +13,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface NotEmptySpace {
 
-    boolean allowWhiteSpace() default false;
+    boolean allowWhitespace() default false;
     String message() default "문자열에 공백이 있음";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

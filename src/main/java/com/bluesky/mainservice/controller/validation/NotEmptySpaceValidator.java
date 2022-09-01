@@ -11,7 +11,7 @@ public class NotEmptySpaceValidator implements ConstraintValidator<NotEmptySpace
 
     @Override
     public void initialize(NotEmptySpace constraintAnnotation) {
-        allowWhiteSpace = constraintAnnotation.allowWhiteSpace();
+        allowWhiteSpace = constraintAnnotation.allowWhitespace();
     }
 
     @Override
