@@ -20,8 +20,8 @@ import static java.util.concurrent.TimeUnit.HOURS;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefreshToken extends BaseTimeEntity {
 
-    private static final long REFRESH_CYCLE_MONITOR_PERIOD = DAYS.toMillis(3);
-    private static final long ALLOWED_REFRESH_CYCLE = HOURS.toMillis(4);
+    public static final long REFRESH_CYCLE_MONITOR_PERIOD = DAYS.toMillis(3);
+    public static final long ALLOWED_REFRESH_CYCLE = HOURS.toMillis(4);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,7 +51,7 @@ public class RefreshToken extends BaseTimeEntity {
     public boolean isValid(long expirationTimeMillis) {
         //남은 시간 확인
         long lastRefreshDateMillis = lastRefreshDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        long now = System.currentTimeMillis();
+        long now = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
         //토큰의 남은 만료 시간이 모니터링 기간안에 포함되는지 확인
         if (expirationTimeMillis - now <= REFRESH_CYCLE_MONITOR_PERIOD) {
