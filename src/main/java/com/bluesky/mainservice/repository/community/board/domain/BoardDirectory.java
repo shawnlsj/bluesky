@@ -33,9 +33,6 @@ public class BoardDirectory extends BaseTimeEntity {
     @OneToMany(mappedBy = "boardDirectory")
     private List<BoardCategory> boardCategoryList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "boardDirectory")
-    private List<Notice> noticeList = new ArrayList<>();
-
     public BoardDirectory(Integer id) {
         this.id = id;
     }
