@@ -18,10 +18,10 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 @DisplayName("페이지 네비게이션 테스트")
 class PageNavigationTest {
 
-    @ParameterizedTest(name = "{index}. 요청된 페이지: {0}, 네비게이션 크기: {1}, 예상 결과값: {2}")
-    @MethodSource("calculateStartPageNumParams")
+    @MethodSource
     @DisplayName("calculateStartPageNum 메소드 테스트")
-    void calculateStartPageNumTest(int requestedPageNum, int pageNavigationSize, int exptected) {
+    @ParameterizedTest(name = "{index}. 요청된 페이지: {0}, 네비게이션 크기: {1}, 예상 결과값: {2}")
+    void test_calculate_start_page_num(int requestedPageNum, int pageNavigationSize, int expected) {
         //given
         PageNavigation pageNavigation =
                 new PageNavigation(requestedPageNum, Integer.MAX_VALUE, pageNavigationSize);
@@ -30,10 +30,10 @@ class PageNavigationTest {
         int result = pageNavigation.getStartPageNum();
 
         //then
-        assertThat(result).isEqualTo(exptected);
+        assertThat(result).isEqualTo(expected);
     }
 
-    static Stream<Arguments> calculateStartPageNumParams() {
+    static Stream<Arguments> test_calculate_start_page_num() {
         return Stream.of(
                 arguments(1, 5, 1),
                 arguments(3, 5, 1),
@@ -80,8 +80,8 @@ class PageNavigationTest {
                     arguments(20, 10, 100, 20));
         }
 
-        @ParameterizedTest(name = "{index}. 요청된 페이지: {0}, 네비게이션 크기: {1}, 총 페이지 수: {2}, 예상 결과값: {3}")
         @MethodSource
+        @ParameterizedTest(name = "{index}. 요청된 페이지: {0}, 네비게이션 크기: {1}, 총 페이지 수: {2}, 예상 결과값: {3}")
         @DisplayName("(총 페이지 수 < 네비게이션의 끝 번호) 인 경우")
         void when_total_pages_lt_last_num_of_nav(int requestedPageNum, int pageNavigationSize, int totalPagesNum, int exptected) {
             //given

@@ -9,9 +9,9 @@ import java.nio.charset.StandardCharsets;
 
 public class CookieUtils {
 
+    public static final String MESSAGE_COOKIE_NAME = "message";
+    public static final String REDIRECT_COOKIE_NAME = "redirect";
     private static final String PREFIX_HOST = "__Host-";
-    private static final String REDIRECT_COOKIE_NAME = "redirect";
-    private static final String MESSAGE_COOKIE_NAME = "message";
 
     //--------리다이렉트 쿠키--------
     public static Cookie createRedirectCookie(String redirectUrl) {

@@ -11,10 +11,10 @@ class JasyptTest {
 
     @Test
     @DisplayName("암복호화 테스트")
-    void encryptorTest() {
+    void test_encrypt_and_decrypt() {
         //given
-        String password = "ABC/123-!@#";
-        String msg = "Hello World";
+        String password = "-HeD:WF!xtA&/xl2tyl6(x]%Zn`vE";
+        String msg = "wTc%=M}D(C0h2z+=S5>t5E{5J)NAkX}$V:jPJ@Tc{?[95|N)Eoz)oQblD34IkG";
 
         StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
         encryptor.setPassword(password);

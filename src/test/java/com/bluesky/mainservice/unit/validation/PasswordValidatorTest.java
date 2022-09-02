@@ -1,14 +1,17 @@
-package com.bluesky.mainservice.unit;
+package com.bluesky.mainservice.unit.validation;
 
 import com.bluesky.mainservice.controller.user.constant.UserOption;
 import com.bluesky.mainservice.controller.user.validation.PasswordValidator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.validation.ConstraintValidatorContext;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ExtendWith(MockitoExtension.class)
 public class PasswordValidatorTest {
     PasswordValidator passwordValidator = new PasswordValidator();
 

@@ -55,6 +55,7 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('test') {
@@ -68,20 +69,23 @@ querydsl {
     jpa = true
     querydslSourcesDir = querydslDir
 }
+
 sourceSets {
     main.java.srcDir querydslDir
 }
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
     querydsl.extendsFrom compileClasspath
 }
+
 compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
 }
 
 //빌드 시 plain jar 생성 방지
 jar {
-	enabled = false
+    enabled = false
 }
