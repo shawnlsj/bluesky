@@ -16,6 +16,8 @@ spring:
   datasource:
     url: ENC(tHung8hp8HKf0vVI7PemI1j6wnEkEWkhxLRhgyaDEW+U3BCF5T7Q3SsjeQO8CZyWk1N3cMmhRbYROHTPjjl0T03BraKZr4p00GRRPF+C12uWRtLNDzw/t/MxfkPs1D1RIcV/pOwgBJ3vJ8oxFMS9AMK2QlutuF8u7BPSmjkqQcTtPkEd9HZdbQ==)
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 5
 
   jpa:
     hibernate:
