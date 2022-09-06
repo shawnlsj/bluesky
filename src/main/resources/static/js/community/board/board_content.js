@@ -444,7 +444,7 @@ class Reply {
         }
     });
 
-    boardDeleteButton.addEventListener("click", function () {
+    boardDeleteButton?.addEventListener("click", function () {
         showConfirmModal("정말로 삭제하시겠습니까?", "게시글 삭제 확인"
             , deleteBoard.bind(null, boardId));
     });
