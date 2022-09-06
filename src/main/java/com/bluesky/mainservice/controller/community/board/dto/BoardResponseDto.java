@@ -180,13 +180,13 @@ public class BoardResponseDto {
                                  @NonNull Integer likesCount,
                                  @NonNull Integer viewCount,
                                  @NonNull LocalDateTime createdDate) {
-            if (likesCount > 9999) {
+            if (likesCount > 999) {
                 this.likesCount = likesCount / 1000 + "k";
             } else {
                 this.likesCount = String.valueOf(likesCount);
             }
 
-            if (viewCount > 9999) {
+            if (viewCount > 999) {
                 this.viewCount = viewCount / 1000 + "k";
             } else {
                 this.viewCount = String.valueOf(viewCount);
