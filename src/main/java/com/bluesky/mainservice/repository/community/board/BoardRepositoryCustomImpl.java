@@ -57,7 +57,8 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
                                 likesCountGoe(searchCondition.getMinLikesCount()),
                                 viewCountGoe(searchCondition.getMinViewCount()),
                                 dateGoe(searchCondition.getSince()),
-                                dateLt(searchCondition.getUntil()))
+                                dateLt(searchCondition.getUntil()),
+                                board.boardState.eq(BoardState.ACTIVE))
                         .orderBy(orderByBuilder(
                                 idDesc(searchCondition.getOrderById()),
                                 likesCountDesc(searchCondition.getOrderByLikesCount()),
@@ -71,9 +72,13 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
                 .select(board.count())
                 .from(board)
                 .where(communityTypeEq(searchCondition.getCommunityType()),
+                        directoryIdEq(searchCondition.getBoardDirectoryId()),
                         replyCountGoe(searchCondition.getMinReplyCount()),
                         likesCountGoe(searchCondition.getMinLikesCount()),
-                        viewCountGoe(searchCondition.getMinViewCount()));
+                        viewCountGoe(searchCondition.getMinViewCount()),
+                        dateGoe(searchCondition.getSince()),
+                        dateLt(searchCondition.getUntil()),
+                        board.boardState.eq(BoardState.ACTIVE));
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
