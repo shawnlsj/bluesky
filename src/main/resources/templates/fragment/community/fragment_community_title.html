@@ -12,7 +12,10 @@
             </a>
         </div>
         <div class="fs-5 mt-2" th:if="${boardDirectoryNavigation.currentId} != null" th:object="${boardDirectoryNavigation}">
-            <a class="d-flex text-decoration-none text-dark" th:href="${#request.getRequestURI()}">
+            <a class="d-flex text-decoration-none text-dark"
+               th:href="@{/{communityType}/board/{boardDirectoryId}
+                (communityType=${#strings.toLowerCase(communityType.name)},
+                boardDirectoryId=${boardDirectoryNavigation.currentId})}">
                 <i class="bi bi-caret-right-fill"></i>
                 <span class="ps-1" th:text="*{idAndNameMap.get(currentId)}"></span>
             </a>
